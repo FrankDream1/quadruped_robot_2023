@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+    <node name="communication" pkg="stm32_Communication" type="STM32_Node" output="screen"/>
+
+</launch>
