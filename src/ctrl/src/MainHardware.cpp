@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "hardware_dog_mpc_ctrl");
     ros::NodeHandle nh;
 
-    // 更改ros logger
+    // 改变ros日志显示输出的级别设置
     if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug)) {
         ros::console::notifyLoggerLevelsChanged();
     }
