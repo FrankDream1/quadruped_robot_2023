@@ -47,8 +47,10 @@ BasicEKF::BasicEKF () {
         R(NUM_LEG * 6 + i, NUM_LEG * 6 + i) = SENSOR_NOISE_ZFOOT;  // 足端高度噪声
     }
 
+    // F << I18
     F.setIdentity();
 
+    // B << 0
     B.setZero();
 
     assume_flat_ground = true;
@@ -67,6 +69,7 @@ BasicEKF::BasicEKF (bool assume_flat_ground_):BasicEKF() {
 void BasicEKF::init_state(CtrlStates& state) {
     filter_initialized = true;
     
+    // P << 3 * I18
     P.setIdentity();
     P = P * 3;
 
