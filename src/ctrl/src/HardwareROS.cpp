@@ -266,6 +266,10 @@ void HardwareROS::receive_low_state() {
     }
 }
 
+void HardwareROS::receive_imu() {
+    
+}
+
 bool HardwareROS::send_cmd() {
     _root_control.compute_joint_torques(dog_ctrl_states);
 

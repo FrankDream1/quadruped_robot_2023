@@ -23,10 +23,10 @@ public:
     // 如果不是平地，观测噪声协方差R中对应足端高度的项设置为最大值，代表足端高度估计不可信
     BasicEKF(bool assume_flat_ground_);
 
-    // 初始化状态空间
+    // 初始化质心位置和足端位置
     void init_state(CtrlStates& state);
 
-    // 估计下一步长的质心位置和线速度
+    // 估计下一步长的足端接触状态，质心位置和线速度
     void update_estimation(CtrlStates& state, double dt);
 
     bool is_inited() {
@@ -74,7 +74,6 @@ private:
 
     Eigen::Matrix<double, 3, 3> eye3;                   // 3x3单位矩阵
     Eigen::Matrix<double, MEAS_SIZE, MEAS_SIZE> S;      // 更新协方差
-    Eigen::Matrix<double, STATE_SIZE, MEAS_SIZE> K;     // 卡尔曼增益
 
     bool assume_flat_ground = false;
 

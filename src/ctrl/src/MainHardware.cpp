@@ -9,9 +9,7 @@
 #include <ros/console.h>
 #include <sensor_msgs/Imu.h>
 
-// control parameters
 #include "include/Param.h"
-// dog control
 #include "include/HardwareROS.h"
 
 int main(int argc, char **argv) {

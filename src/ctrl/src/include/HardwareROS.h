@@ -49,8 +49,11 @@ public:
     // 操作杆控制信息回调函数
     void joy_callback(const sensor_msgs::Joy::ConstPtr &joy_msg);
 
-    // 下位机向上位机发送反馈信息
+    // 接受下位机返回数据
     void receive_low_state();
+
+    // 接受IMU返回数据
+    void receive_imu();
 
     // 上位机向下位机发送控制指令
     bool send_cmd();

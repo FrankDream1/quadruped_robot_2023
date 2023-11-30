@@ -59,7 +59,7 @@ BasicEKF::BasicEKF () {
 BasicEKF::BasicEKF (bool assume_flat_ground_):BasicEKF() {
     assume_flat_ground = assume_flat_ground_;
     if (assume_flat_ground == false) {
-        // 如果不在平地上行走，四条腿的足端高度全部不可信
+        // 如果不在平地上行走，四条腿的足端高度全部不可信，将R中对应项设为最大值
         for (int i = 0; i < NUM_LEG; ++i) {
             R(NUM_LEG * 6 + i, NUM_LEG * 6 + i) = 1e5;  
         }
@@ -75,8 +75,9 @@ void BasicEKF::init_state(CtrlStates& state) {
 
     x.setZero();
     // 初始化机器人质心位置
-    x.segment<3>(0) = Eigen::Vector3d(0, 0, 0.09);
+    x.segment<3>(0) = Eigen::Vector3d(0, 0, 0.1);
     for (int i = 0; i < NUM_LEG; ++i) {
+        // 机体坐标系中足端位置
         Eigen::Vector3d fk_pos = state.foot_pos_rel.block<3, 1>(0, i);
         // 初始化世界坐标系中足端的位置
         x.segment<3>(6 + i * 3) = state.root_rot_mat * fk_pos + x.segment<3>(0);
@@ -84,7 +85,7 @@ void BasicEKF::init_state(CtrlStates& state) {
 }
 
 void BasicEKF::update_estimation(CtrlStates& state, double dt) {
-    // 使用最新的dt更新状态转移矩阵和控制输入矩阵
+    // 更新状态转移矩阵和控制输入矩阵
     // F << I3 I3*dt 0  0  0  0
     //      0   I3   0  0  0  0
     //      0   0    I3 0  0  0 
@@ -92,6 +93,7 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
     //      0   0    0  0  I3 0 
     //      0   0    0  0  0  I3
     F.block<3, 3>(0, 3) = dt * eye3;
+
     // B <<   0
     //      I3*dt
     //        0 
@@ -109,19 +111,28 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
         for (int i = 0; i < NUM_LEG; ++i) 
             estimated_contacts[i] = 1.0;
     } else {  
-        // 行走状态，根据足端受力大小判断是否接触
+        // 行走状态，采用接触状态检测算法
         for (int i = 0; i < NUM_LEG; ++i) {
-            estimated_contacts[i] = std::min(std::max((state.foot_force(i)) / (100.0 - 0.0), 0.0), 1.0);
+            // to be continued
+
+
+
+
+
+
+
+
+
         }
     }
 
     // 根据u和dt更新Q
-    // Q << I3*dt*noise(ep)/20           0                  0                 0                0                0
-    //             0          9.8*I3*dt*noise(ev)/20        0                 0                0                0
-    //             0                     0           I3*dt*noise(ep1)         0                0                0
-    //             0                     0                  0         I3*dt*noise(ep2)         0                0
-    //             0                     0                  0                 0        I3*dt*noise(ep3)         0
-    //             0                     0                  0                 0                0        I3*dt*noise(ep4)
+    // Q << I3*dt*noise(ep)/20           0                0              0             0             0
+    //             0          9.8*I3*dt*noise(ev)/20      0              0             0             0
+    //             0                     0           I3*noise(ep1)       0             0             0
+    //             0                     0                0         I3*noise(ep2)      0             0
+    //             0                     0                0              0        I3*noise(ep3)      0
+    //             0                     0                0              0             0        I3*noise(ep4)
     Q.block<3, 3>(0, 0) = PROCESS_NOISE_PIMU * dt / 20.0 * eye3;
     Q.block<3, 3>(3, 3) = PROCESS_NOISE_VIMU * dt * 9.8 / 20.0 * eye3;
 
@@ -140,12 +151,12 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
         }
     }
 
-    // 预测
-    xbar = F * x + B * u ;
-    Pbar = F * P * F.transpose() + Q;
-    yhat = H * xbar;
+    // 预测过程
+    xbar = F * x + B * u;               // 状态预测方程
+    Pbar = F * P * F.transpose() + Q;   // 先验估计状态协方差方程
+    yhat = H * xbar;                    // 测量方程
 
-    // 真实观测值
+    // 计算观测值
     for (int i=0; i<NUM_LEG; ++i) {
         Eigen::Vector3d fk_pos = state.foot_pos_rel.block<3, 1>(0, i);
         y.block<3, 1>(i * 3, 0) = state.root_rot_mat * fk_pos;  // 质心与足端位置之差
@@ -159,14 +170,14 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
         y(NUM_LEG * 6 + i) = (1.0 - estimated_contacts[i]) * (x(2) + fk_pos(2)) + estimated_contacts[i] * 0; 
     }
 
-    // 更新
+    // 更新过程
     S = H * Pbar * H.transpose() + R;
     S = 0.5 * (S + S.transpose());
-    error_y = y - yhat;
-    Serror_y = S.fullPivHouseholderQr().solve(error_y);
-    x = xbar + Pbar * H.transpose() * Serror_y;
+    error_y = y - yhat;     // 测量误差
+    Serror_y = S.fullPivHouseholderQr().solve(error_y); // K = Pbar * H^T * S^-1 * error_y
+    x = xbar + Pbar * H.transpose() * Serror_y;         // 测量更新方程
     SH = S.fullPivHouseholderQr().solve(H);
-    P = Pbar - Pbar * H.transpose() * SH * Pbar;
+    P = Pbar - Pbar * H.transpose() * SH * Pbar;    // 后验估计状态协方差方程
     P = 0.5 * (P + P.transpose());
 
     // 减少位置漂移
