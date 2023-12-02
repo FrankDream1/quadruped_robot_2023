@@ -5,7 +5,7 @@
 #include <std_msgs/Float32MultiArray.h>
 
 /* User Config */
-#define SENDRATE        100    // Hz,节点通过串口下发的频率
+#define SENDRATE        100    //   Hz,节点通过串口下发的频率
 #define UPQUEUESIZE     10      // UpQueue长度
 #define DOWNQUEUESIZE   20      //  DownQueue长度
 // KP KD
