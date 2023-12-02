@@ -385,8 +385,8 @@ public:
 
     Eigen::Matrix<double, NUM_DOF, 1> joint_torques;	// 关节扭矩
 
-    Eigen::Vector3d imu_acc;  // IMU加速度
-    Eigen::Vector3d imu_ang_vel;  // IMU角速度
+    Eigen::Vector3d imu_acc;		// IMU加速度
+    Eigen::Vector3d imu_ang_vel;	// IMU角速度
 
     bool estimated_contacts[NUM_LEG];  // 估计有接触则设为真
     Eigen::Vector3d estimated_root_pos;  // 估计质心位置
