@@ -71,7 +71,7 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
 }
 
 bool HardwareROS::update_foot_forces_grf(double dt) {
-    // 使用MPC控制计算接触腿足端力
+    // 使用MPC控制计算支撑腿足端力
     dog_ctrl_states.foot_forces_grf = _root_control.compute_grf(dog_ctrl_states, dt);
     return true;
 }

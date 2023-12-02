@@ -14,12 +14,9 @@ public:
     }
 
     void reset() {
-		stance_leg_control_type = 1;
-		use_terrain_adapt = 1;
 		movement_mode = 0;
 		counter_per_gait = 120 * 2;
 		counter_per_swing = 120;
-		counter = 0;
 		gait_counter.setZero();
 		gait_counter_speed.setZero();
 		gait_type = 1;
@@ -61,16 +58,11 @@ public:
 		root_rot_mat_z.setZero();
 		root_lin_vel.setZero();
 		root_ang_vel.setZero();
-		root_acc.setZero();
 
 		foot_force.setZero();
 
 		joint_pos.setZero();
 		joint_vel.setZero();
-
-		walking_surface_height_tmp = 0;
-		walking_surface_height = 0;
-		walking_surface_fit_count = 0;
 
 		foot_pos_target_world.setZero();
 		foot_pos_target_abs.setZero();
@@ -79,7 +71,6 @@ public:
 		foot_pos_world.setZero();
 		foot_pos_abs.setZero();
 		foot_pos_rel.setZero();
-		foot_pos_abs_mpc.setZero();
 		foot_pos_rel_last_time.setZero();
 		foot_pos_target_last_time.setZero();
 		foot_pos_cur.setZero();
@@ -127,9 +118,6 @@ public:
 
 	// 初始化参数服务器
     void resetFromROSParam(ros::NodeHandle &_nh) {
-		_nh.param("stance_leg_control_type", stance_leg_control_type, 1);
-		_nh.param("use_terrain_adapt", use_terrain_adapt, 1);
-		
 		_nh.param("robot_mass", robot_mass, 14.0);
 
 		double trunk_inertia_xx;
@@ -316,94 +304,72 @@ public:
 		}
     }
 
-    int movement_mode;  			// 0代表站立, 1代表开始移动
+    int movement_mode;	// 0代表站立, 1代表开始移动
     double control_dt = MAIN_UPDATE_FREQUENCY / 1000.0;
 
-    int counter_per_plan; // 每个规划周期计数次数
-    double counter_per_gait; // 每个步态周期计数次数
-    double counter_per_swing; // 每个摆动周期计数次数
-    Eigen::Vector4d gait_counter;
-    Eigen::Vector4d gait_counter_speed;
+    double counter_per_gait; // 步态周期平均计数次数
+    double counter_per_swing; // 摆动周期平均计数次数
+    int counter;	// 计数周期
+	Eigen::Vector4d gait_counter;	// 每个步态周期内计数次数
+    Eigen::Vector4d gait_counter_speed;	// 每个步态周期内计数变化率
 
-    int gait_type;		// 步态类型
-    int gait_type_last; // 上阶段的步态类型
+    int gait_type;	// 步态类型
+    int gait_type_last;	// 上阶段的步态类型
 
-    Eigen::Vector3d root_pos_d;		// 期望质心位置	
+    Eigen::Vector3d root_pos_d;	// 期望质心位置	
     Eigen::Vector3d root_euler_d;	// 期望机身姿态
     Eigen::Vector3d root_lin_vel_d; // 期望质心速度
-    Eigen::Vector3d root_ang_vel_d;	// 期望质心角速度
+	Eigen::Vector3d root_lin_vel_d_world;	// 期望质心速度（世界坐标系）
+    Eigen::Vector3d root_ang_vel_d;	// 期望机体角速度
 
-    Eigen::Matrix<double, MPC_STATE_DIM, 1> mpc_states;						// MPC状态变量
-    Eigen::Matrix<double, MPC_STATE_DIM * PLAN_HORIZON, 1> mpc_states_d;	// 
+    Eigen::Matrix<double, MPC_STATE_DIM, 1> mpc_states;	// MPC状态变量
+    Eigen::Matrix<double, MPC_STATE_DIM * PLAN_HORIZON, 1> mpc_states_d;	// 时间步长内的MPC状态变量
 
-    // 运动学参数
-    double robot_mass;
-    Eigen::Matrix3d trunk_inertia;
-    Eigen::Matrix<double, 3, NUM_LEG> default_foot_pos;
+    double robot_mass;	// 机体质量
+    Eigen::Matrix3d trunk_inertia;	// 机身转动惯量
+    Eigen::Matrix<double, 3, NUM_LEG> default_foot_pos;	// 默认足端位置
 
     // MPC权重参数
     Eigen::VectorXd q_weights;
     Eigen::VectorXd r_weights;
 
-    // 地形俯仰角
-    double terrain_pitch_angle; 
+    double terrain_pitch_angle;	// 地形俯仰角
 
-    // 运动学变量
-    Eigen::Vector3d root_pos;
-    Eigen::Quaterniond root_quat;
-    Eigen::Vector3d root_euler;
-    Eigen::Matrix3d root_rot_mat;
-    Eigen::Matrix3d root_rot_mat_z;
-    Eigen::Vector3d root_lin_vel;
-    Eigen::Vector3d root_ang_vel;
-    Eigen::Vector3d root_acc;
+    Eigen::Vector3d root_pos;	// 机体质心位置
+    Eigen::Quaterniond root_quat;	// 机身四元数
+    Eigen::Vector3d root_euler;	// 机身姿态角
+    Eigen::Matrix3d root_rot_mat;	// 机体坐标系到附体坐标系变换
+    Eigen::Matrix3d root_rot_mat_z;	// 机体坐标系到附体坐标系变换（相对z轴）
+    Eigen::Vector3d root_lin_vel;	// 质心线速度
+    Eigen::Vector3d root_ang_vel;	// 机身角速度
 
-    Eigen::Vector4d foot_force;
-    Eigen::Matrix<double, 3, NUM_LEG> foot_forces_kin;
-    Eigen::Matrix<double, 3, NUM_LEG> foot_forces_grf;
+    Eigen::Vector4d foot_force;	// 足端力
+    Eigen::Matrix<double, 3, NUM_LEG> foot_forces_kin;	// 摆动腿足端残差力 
+    Eigen::Matrix<double, 3, NUM_LEG> foot_forces_grf;	// 支撑腿足端反作用力
 
-    Eigen::Matrix<double, NUM_DOF, 1> joint_pos;
-    Eigen::Matrix<double, NUM_DOF, 1> joint_vel;
+    Eigen::Matrix<double, NUM_DOF, 1> joint_pos;	// 关节位置
+    Eigen::Matrix<double, NUM_DOF, 1> joint_vel;	// 关节速度
 
-    double walking_surface_height_tmp;
-    double walking_surface_height;
-    int walking_surface_fit_count;
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_target_world; // 期望落足点位置（世界坐标系）
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_target_abs; // 期望落足点位置（附体坐标系）
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_target_rel; // 期望落足点位置（机体坐标系）
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_start;	// 初始落足点位置
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_world;	// 落足点位置（世界坐标系）
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_abs;	// 落足点位置（附体坐标系）
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_rel; // 落足点位置（机体坐标系）
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_rel_last_time;	// 上次的落足点位置（机体坐标系）
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_target_last_time;	// 上次的期望落足点位置（机体坐标系）
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_cur;	// 当前足端位置
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_recent_contact;	// 最近一次接触地面的足端位置
 
-    // 期望落足点位置
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_target_world; // 世界坐标系中
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_target_abs; // 以质心为原点的世界坐标系中
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_target_rel; // 机体坐标系中
-    
-	// 初始落足点位置
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_start; 
+    Eigen::Matrix<double, 3, NUM_LEG> foot_vel_world;	//足端速度（世界坐标系）
+    Eigen::Matrix<double, 3, NUM_LEG> foot_vel_abs;	// 足端速度（附体坐标系）
+    Eigen::Matrix<double, 3, NUM_LEG> foot_vel_rel;	// 足端速度（机体坐标系）
+    Eigen::Matrix<double, 12, 12> j_foot;	// 每条腿的雅可比矩阵合并矩阵
 
-	// 落足点位置
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_world; // 世界坐标系中
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_abs; // 以质心为原点的世界坐标系中
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_rel; // 机体坐标系中
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_abs_mpc;
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_rel_last_time;
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_target_last_time;
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_cur;
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_recent_contact;
-
-	// 足部速度
-    Eigen::Matrix<double, 3, NUM_LEG> foot_vel_world;
-    Eigen::Matrix<double, 3, NUM_LEG> foot_vel_abs;
-    Eigen::Matrix<double, 3, NUM_LEG> foot_vel_rel;
-    Eigen::Matrix<double, 12, 12> j_foot;
-
-    bool contacts[NUM_LEG];         // 用来决定腿部运动模式的flag
-    bool plan_contacts[NUM_LEG];    // 用来决定腿部期望运动模式的flag
+    bool contacts[NUM_LEG];	// 用来决定腿部运动模式的flag
+    bool plan_contacts[NUM_LEG];	// 用来决定腿部期望运动模式的flag
     bool early_contacts[NUM_LEG];   // 摆动过程中碰撞则设为真
-
-    // PD控制系数
-    double kp_lin_x;
-    double kd_lin_x;
-    double kf_lin_x;
-    double kp_lin_y;
-    double kd_lin_y;
-    double kf_lin_y;
 
     Eigen::Matrix<double, NUM_DOF_PER_LEG, NUM_LEG> kp_foot;
     Eigen::Matrix<double, NUM_DOF_PER_LEG, NUM_LEG> kd_foot;
@@ -415,17 +381,13 @@ public:
     Eigen::Vector3d kp_angular;
     Eigen::Vector3d kd_angular;
 
-	// 关节重力补偿
-    Eigen::Matrix<double, NUM_DOF, 1> torques_gravity;
+    Eigen::Matrix<double, NUM_DOF, 1> torques_gravity;	// 关节重力补偿
 
-	// 关节扭矩
-    Eigen::Matrix<double, NUM_DOF, 1> joint_torques;
+    Eigen::Matrix<double, NUM_DOF, 1> joint_torques;	// 关节扭矩
 
-    // IMU数据
-    Eigen::Vector3d imu_acc;  // 加速度
-    Eigen::Vector3d imu_ang_vel;  // 角速度
+    Eigen::Vector3d imu_acc;  // IMU加速度
+    Eigen::Vector3d imu_ang_vel;  // IMU角速度
 
-    // 状态估计
     bool estimated_contacts[NUM_LEG];  // 估计有接触则设为真
     Eigen::Vector3d estimated_root_pos;  // 估计质心位置
     Eigen::Vector3d estimated_root_vel;  // 估计质心速度

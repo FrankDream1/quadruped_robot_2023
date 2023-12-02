@@ -211,12 +211,11 @@ void RobotControl::generate_swing_legs_ctrl(CtrlStates &state, double dt) {
     Eigen::Matrix<double, 3, NUM_LEG> foot_vel_target;  // 期望足端速度
     foot_vel_target.setZero();
 
-    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_error;
-    Eigen::Matrix<double, 3, NUM_LEG> foot_vel_error;
+    Eigen::Matrix<double, 3, NUM_LEG> foot_pos_error;   // 落足点位置误差
+    Eigen::Matrix<double, 3, NUM_LEG> foot_vel_error;   // 落足点速度误差
 
-    // 机体坐标系中摆动腿和支撑腿的足端力
-    Eigen::Matrix<double, 3, NUM_LEG> foot_forces_kin;
-    Eigen::Matrix<double, 3, NUM_LEG> foot_forces_grf;
+    Eigen::Matrix<double, 3, NUM_LEG> foot_forces_kin;  // 摆动腿足端残差力
+    Eigen::Matrix<double, 3, NUM_LEG> foot_forces_grf;  // 支撑腿足端反作用力
 
     for (int i = 0; i < NUM_LEG; ++i) {
         foot_pos_cur.block<3, 1>(0, i) = state.root_rot_mat_z.transpose() * state.foot_pos_abs.block<3, 1>(0, i);
@@ -249,10 +248,13 @@ void RobotControl::generate_swing_legs_ctrl(CtrlStates &state, double dt) {
         // 更新期望落足点位置
         state.foot_pos_target_last_time.block<3, 1>(0, i) = foot_pos_target.block<3, 1>(0, i);
 
+        // 计算落足点位置误差
         foot_pos_error.block<3, 1>(0, i) = foot_pos_target.block<3, 1>(0, i) - foot_pos_cur.block<3, 1>(0, i);
+        
+        // 计算落足点速度误差
         foot_vel_error.block<3, 1>(0, i) = foot_vel_target.block<3, 1>(0, i) - foot_vel_cur.block<3, 1>(0, i);
         
-        // 摆动腿力矩
+        // 计算摆动腿足端残差力
         foot_forces_kin.block<3, 1>(0, i) = foot_pos_error.block<3, 1>(0, i).cwiseProduct(state.kp_foot.block<3, 1>(0, i)) +
                                             foot_vel_error.block<3, 1>(0, i).cwiseProduct(state.kd_foot.block<3, 1>(0, i));
     }
