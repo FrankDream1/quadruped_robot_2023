@@ -66,7 +66,7 @@ private:
     // 24 25 26 27  四条腿足端高度
     Eigen::Matrix<double, MEAS_SIZE, 1> y;              // 观测值
     Eigen::Matrix<double, MEAS_SIZE, 1> yhat;           // 估计观测值
-    Eigen::Matrix<double, MEAS_SIZE, 1> error_y;        // 观测误
+    Eigen::Matrix<double, MEAS_SIZE, 1> error_y;        // 观测误差
     Eigen::Matrix<double, MEAS_SIZE, 1> Serror_y;       // S^-1 * error_y
     Eigen::Matrix<double, MEAS_SIZE, STATE_SIZE> H;     // 观测矩阵
     Eigen::Matrix<double, MEAS_SIZE, STATE_SIZE> SH;    // S^-1 * H

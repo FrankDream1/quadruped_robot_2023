@@ -1,6 +1,6 @@
 #include "include/BasicEKF.h"
 
-BasicEKF::BasicEKF () {
+BasicEKF::BasicEKF() {
     eye3.setIdentity();
     
     // H表示状态空间变量到观测空间变量的映射
@@ -56,7 +56,7 @@ BasicEKF::BasicEKF () {
     assume_flat_ground = true;
 }
 
-BasicEKF::BasicEKF (bool assume_flat_ground_):BasicEKF() {
+BasicEKF::BasicEKF(bool assume_flat_ground_):BasicEKF() {
     assume_flat_ground = assume_flat_ground_;
     if (assume_flat_ground == false) {
         // 如果不在平地上行走，四条腿的足端高度全部不可信，将R中对应项设为最大值
