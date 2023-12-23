@@ -61,21 +61,18 @@ public:
 private:
     ros::NodeHandle nh;
 
-    ros::Publisher pub_joint_cmd; // 关节力矩命令
-    ros::Publisher pub_joint_angle; // 关节角度和足端位置
-    ros::Publisher pub_imu; // IMU数据
+    ros::Publisher pub_joint_cmd; // 关节力矩命令发布者
+    ros::Publisher pub_joint_angle; // 关节角度发布者
+    ros::Publisher pub_imu; // IMU数据发布者
 
-    sensor_msgs::JointState joint_foot_msg;
-    sensor_msgs::Imu imu_msg;
+    sensor_msgs::JointState joint_foot_msg; // 关节信息
+    sensor_msgs::Imu imu_msg;   // 
     
     ros::Subscriber sub_joy_msg;
     ros::Subscriber sub_downstream; // 订阅
 
     // 估计状态发布者
     ros::Publisher pub_estimated_pose;
-
-    // 电机数据存储指针
-    static UnitreeDriver *pMotorDriver;
 
     // 硬件读取指针
     std::thread thread_;
