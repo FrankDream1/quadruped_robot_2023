@@ -29,8 +29,6 @@ class RobotControl {
 public:
     RobotControl();
 
-    RobotControl(ros::NodeHandle &_nh);
-
     // 更新腿部运动模式和计算落足点位置
     void update_plan(CtrlStates &state, double dt);
 
@@ -50,17 +48,13 @@ private:
     // 摆动腿生成贝塞尔曲线
     BezierUtils bezierUtils[NUM_LEG];
 
-    // 质心加速度
-    Eigen::Matrix<double, 6, 1> root_acc;
-
     // MPC权重矩阵
     Eigen::DiagonalMatrix<double, 6> Q;
     double R;
 
-    // 地面摩擦系数
-    double mu;
-    double F_min;
-    double F_max;
+    double mu;  // 地面摩擦系数
+    double F_min;   // 最小摩擦力
+    double F_max;   // 最大摩擦力
 
     // 设置二次规划中的常数
     Eigen::SparseMatrix<double> hessian;

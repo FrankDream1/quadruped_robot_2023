@@ -1,4 +1,4 @@
-#include "include/ConvexMpc.h"
+#include "../include/ConvexMpc.h"
 
 ConvexMpc::ConvexMpc(Eigen::VectorXd &q_weights_, Eigen::VectorXd &r_weights_) {
     mu = 0.3;

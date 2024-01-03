@@ -1,5 +1,4 @@
-#include "include/HardwareROS.h"
-#include "stm32_communication.cpp"
+#include "../include/HardwareROS.h"
 
 HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     nh = _nh;
@@ -20,7 +19,6 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     pub_estimated_pose = nh.advertise<nav_msgs::Odometry>("/dog_hardware/estimation_body_pose", 100);
 
     sub_joy_msg = nh.subscribe("/joy", 1000, &HardwareROS::joy_callback, this);
-    sub_downstream = nh.subscribe("/downstream", 20, DownStreamCallback);
 
     joy_cmd_ctrl_state = 0;
     joy_cmd_ctrl_state_change_request = false;
@@ -63,8 +61,6 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     //腿的顺序变换
     swap_joint_indices << 0, 1, 2, 6, 7, 8, 3, 4, 5, 9, 10, 11;
     swap_foot_indices << 1, 0, 3, 2;
-
-    pMotorDriver = new UnitreeDriver("/dev/ttyUSB0");
 
     // 启动硬件读取线程
     thread_ = std::thread(&HardwareROS::receive_low_state, this);
@@ -197,8 +193,6 @@ void HardwareROS::receive_low_state() {
     ros::Duration dt(0);
 
     while (destruct == false) {
-        // 更新电机数据
-        pMotorDriver->UpdateMotorData();
 
         now = ros::Time::now();
         dt = now - prev;
@@ -271,19 +265,5 @@ void HardwareROS::receive_imu() {
 }
 
 bool HardwareROS::send_cmd() {
-    _root_control.compute_joint_torques(dog_ctrl_states);
-
-    // notice dog_ctrl_states.joint_torques uses order FL, FR, RL, RR
-    // notice cmd uses order FR, FL, RR, RL
-    for (int i = 0; i < NUM_DOF; i++) {
-        cmd.motorCmd[i].mode = 0x0A;   // motor switch to servo (PMSM) mode
-        cmd.motorCmd[i].q = UNITREE_LEGGED_SDK::PosStopF; // shut down position control
-        cmd.motorCmd[i].Kp = 0;
-        cmd.motorCmd[i].dq = UNITREE_LEGGED_SDK::VelStopF; // shut down velocity control
-        cmd.motorCmd[i].Kd = 0;
-        int swap_i = swap_joint_indices(i);
-        cmd.motorCmd[i].tau = dog_ctrl_states.joint_torques(swap_i);
-    }
-
-    return true;
+      
 }

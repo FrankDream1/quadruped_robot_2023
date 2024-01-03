@@ -9,8 +9,8 @@
 #include <ros/console.h>
 #include <sensor_msgs/Imu.h>
 
-#include "include/Param.h"
-#include "include/HardwareROS.h"
+#include "../include/Param.h"
+#include "../include/HardwareROS.h"
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "hardware_dog_mpc_ctrl");

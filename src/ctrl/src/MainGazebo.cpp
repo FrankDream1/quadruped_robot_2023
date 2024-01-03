@@ -10,9 +10,9 @@
 #include <sensor_msgs/Imu.h>
 
 // control parameters
-#include "include/Param.h"
+#include "../include/Param.h"
 // dog control
-#include "include/GazeboROS.h"
+#include "../include/GazeboROS.h"
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "gazebo_dog_mpc_ctrl");

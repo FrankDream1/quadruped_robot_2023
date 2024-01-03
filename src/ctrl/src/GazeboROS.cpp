@@ -1,4 +1,4 @@
-#include "include/GazeboROS.h"
+#include "../include/GazeboROS.h"
 
 GazeboROS::GazeboROS(ros::NodeHandle &_nh) {
     nh = _nh;

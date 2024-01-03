@@ -1,4 +1,4 @@
-#include "include/Kinematics.h"
+#include "../include/Kinematics.h"
 
 Eigen::Vector3d Kinematics::fk(Eigen::Vector3d q, Eigen::VectorXd rho_opt, Eigen::VectorXd rho_fix) {
     Eigen::Vector3d out;

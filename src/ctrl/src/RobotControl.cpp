@@ -1,4 +1,4 @@
-#include "include/RobotControl.h"
+#include "../include/RobotControl.h"
 
 RobotControl::RobotControl() {
     std::cout << "init RobotControl" << std::endl;
@@ -50,94 +50,6 @@ RobotControl::RobotControl() {
         recent_contact_y_filter[i] = MovingWindowFilter(60);
         recent_contact_z_filter[i] = MovingWindowFilter(60);
     }
-}
-
-RobotControl::RobotControl(ros::NodeHandle &_nh):RobotControl() {
-    std::cout << "init nh" << std::endl;
-    nh = _nh;
-    _nh.param("use_sim_time", use_sim_time);
-    // initial debug publisher
-    for (int i = 0; i < NUM_LEG; ++i) {
-        std::string id = std::to_string(i);
-        std::string start_topic = "/isaac_a1/foot" + id + "/start_pos";
-        std::string end_topic = "/isaac_a1/foot" + id + "/end_pos";
-        std::string path_topic = "/isaac_a1/foot" + id + "/swing_path";
-
-        pub_foot_start[i] = nh.advertise<visualization_msgs::Marker>(start_topic, 100);
-        pub_foot_end[i] = nh.advertise<visualization_msgs::Marker>(end_topic, 100);
-        pub_foot_path[i] = nh.advertise<visualization_msgs::Marker>(path_topic, 100);
-
-        // set basic info of markers
-        foot_start_marker[i].header.frame_id = "a1_world";
-        foot_start_marker[i].ns = "basic_shapes";
-        foot_start_marker[i].id = 10 + i;
-        foot_start_marker[i].type = visualization_msgs::Marker::CYLINDER;
-        foot_start_marker[i].action = visualization_msgs::Marker::ADD;
-        // Set the scale of the marker -- 1x1x1 here means 1m on a side
-        foot_start_marker[i].scale.x = 0.08;
-        foot_start_marker[i].scale.y = 0.08;
-        foot_start_marker[i].scale.z = 0.02;
-        foot_start_marker[i].pose.orientation.x = 0.0;
-        foot_start_marker[i].pose.orientation.y = 0.0;
-        foot_start_marker[i].pose.orientation.z = 0.0;
-        foot_start_marker[i].pose.orientation.w = 1.0;
-
-        // Set the color -- be sure to set alpha to something non-zero!
-        foot_start_marker[i].color.r = 1.0f;
-        foot_start_marker[i].color.g = 0.0f;
-        foot_start_marker[i].color.b = 0.0f;
-        foot_start_marker[i].color.a = 1.0;
-
-        foot_end_marker[i].lifetime = ros::Duration();
-
-        foot_end_marker[i].header.frame_id = "a1_world";
-        foot_end_marker[i].ns = "basic_shapes";
-        foot_end_marker[i].id = 20 + i;
-        foot_end_marker[i].type = visualization_msgs::Marker::CYLINDER;
-        foot_end_marker[i].action = visualization_msgs::Marker::ADD;
-        // Set the scale of the marker -- 1x1x1 here means 1m on a side
-        foot_end_marker[i].scale.x = 0.08;
-        foot_end_marker[i].scale.y = 0.08;
-        foot_end_marker[i].scale.z = 0.02;
-        foot_end_marker[i].pose.orientation.x = 0.0;
-        foot_end_marker[i].pose.orientation.y = 0.0;
-        foot_end_marker[i].pose.orientation.z = 0.0;
-        foot_end_marker[i].pose.orientation.w = 1.0;
-
-        // Set the color -- be sure to set alpha to something non-zero!
-        foot_end_marker[i].color.r = 0.0f;
-        foot_end_marker[i].color.g = 0.0f;
-        foot_end_marker[i].color.b = 1.0f;
-        foot_end_marker[i].color.a = 1.0;
-
-        foot_end_marker[i].lifetime = ros::Duration();
-
-        foot_path_marker[i].header.frame_id = "a1_world";
-        foot_path_marker[i].ns = "basic_shapes";
-        foot_path_marker[i].id = 30 + i;
-        foot_path_marker[i].type = visualization_msgs::Marker::LINE_STRIP;
-        foot_path_marker[i].action = visualization_msgs::Marker::ADD;
-        // Set the scale of the marker -- 1x1x1 here means 1m on a side
-        foot_path_marker[i].scale.x = 0.02;
-        foot_path_marker[i].pose.position.x = 0.0;
-        foot_path_marker[i].pose.position.y = 0.0;
-        foot_path_marker[i].pose.position.z = 0.0;
-        foot_path_marker[i].pose.orientation.w = 1.0;
-        foot_path_marker[i].pose.orientation.x = 0.0;
-        foot_path_marker[i].pose.orientation.y = 0.0;
-        foot_path_marker[i].pose.orientation.z = 0.0;
-        foot_path_marker[i].points.resize(10); // fix to be 10 points
-        foot_path_marker[i].colors.resize(10); // fix to be 10 points
-        for (int k = 0; k < 10; k++) {
-            foot_path_marker[i].colors[k].r = 0.0f;
-            foot_path_marker[i].colors[k].g = 1.0f;
-            foot_path_marker[i].colors[k].b = 0.0f;
-            foot_path_marker[i].colors[k].a = 1.0f;
-        }
-
-        foot_path_marker[i].lifetime = ros::Duration();
-    }
-    pub_terrain_angle = nh.advertise<std_msgs::Float64>("a1_debug/terrain_angle", 100);
 }
 
 void RobotControl::update_plan(CtrlStates &state, double dt) {
@@ -337,160 +249,155 @@ Eigen::Matrix<double, 3, NUM_LEG> RobotControl::compute_grf(CtrlStates &state, d
     }
 
     // 地形适应
-    if (state.stance_leg_control_type == 1) {
-        Eigen::Vector3d surf_coef = compute_walking_surface(state); // 当前行走平面
-        Eigen::Vector3d flat_ground_coef; // 理想行走平面
-        flat_ground_coef << 0, 0, 1;
-        double terrain_angle = 0;
+    Eigen::Vector3d surf_coef = compute_walking_surface(state); // 当前行走平面
+    Eigen::Vector3d flat_ground_coef; // 理想行走平面
+    flat_ground_coef << 0, 0, 1;
+    double terrain_angle = 0;
 
-        // 只有当机器狗站立超过一定高度时才计算地形角
-        if (state.root_pos[2] > 0.1) {
-            terrain_angle = terrain_angle_filter.CalculateAverage(Utils::cal_dihedral_angle(flat_ground_coef, surf_coef));
-        } else {
-            terrain_angle = 0;
-        }
-        
-        if (terrain_angle > 0.5) {
-            terrain_angle = 0.5;
-        }
-        if (terrain_angle < -0.5) {
-            terrain_angle = -0.5;
-        }
-
-        // 前后腿的足端高度差
-        double F_R_diff = state.foot_pos_recent_contact(2, 0) + state.foot_pos_recent_contact(2, 1) - state.foot_pos_recent_contact(2, 2) -
-                        state.foot_pos_recent_contact(2, 3); // p0z + p1z - p2z - p3z
-
-        // 当前后腿足端高度差大于某一个值时，俯仰角设为地形角
-        if (state.use_terrain_adapt) {
-            if (F_R_diff > 0.05) {
-            state.root_euler_d[1] = -terrain_angle;
-            } else {
-            state.root_euler_d[1] = terrain_angle;
-            }
-        }
-
-        std_msgs::Float64 terrain_angle_msg;
-        terrain_angle_msg.data = terrain_angle * (180 / 3.1415926);
-        pub_terrain_angle.publish(terrain_angle_msg); // 用角度发布地形角
-        std::cout << "desire pitch in deg: " << state.root_euler_d[1] * (180 / 3.1415926) << std::endl;
-        std::cout << "terrain angle: " << terrain_angle << std::endl;
-
-        // 保存计算的地形俯仰角
-        state.terrain_pitch_angle = terrain_angle;
+    // 只有当机器狗站立超过一定高度时才计算地形角
+    if (state.root_pos[2] > 0.1) {
+        terrain_angle = terrain_angle_filter.CalculateAverage(Utils::cal_dihedral_angle(flat_ground_coef, surf_coef));
+    } else {
+        terrain_angle = 0;
+    }
+    
+    if (terrain_angle > 0.5) {
+        terrain_angle = 0.5;
+    }
+    if (terrain_angle < -0.5) {
+        terrain_angle = -0.5;
     }
 
-    // MPC规划
-    if (state.stance_leg_control_type == 1) { 
-        ConvexMpc mpc_solver = ConvexMpc(state.q_weights, state.r_weights);
-        mpc_solver.reset();
+    // 前后腿的足端高度差
+    double F_R_diff = state.foot_pos_recent_contact(2, 0) + state.foot_pos_recent_contact(2, 1) - state.foot_pos_recent_contact(2, 2) -
+                    state.foot_pos_recent_contact(2, 3); // p0z + p1z - p2z - p3z
 
-        // 在第一个时间步长初始化MPC状态函数
-        state.mpc_states << state.root_euler[0], state.root_euler[1], state.root_euler[2],
-                state.root_pos[0], state.root_pos[1], state.root_pos[2],
-                state.root_ang_vel[0], state.root_ang_vel[1], state.root_ang_vel[2],
-                state.root_lin_vel[0], state.root_lin_vel[1], state.root_lin_vel[2],
+    // 当前后腿足端高度差大于某一个值时，俯仰角设为地形角
+    if (F_R_diff > 0.05) {
+    state.root_euler_d[1] = -terrain_angle;
+    } else {
+    state.root_euler_d[1] = terrain_angle;
+    }
+
+    std_msgs::Float64 terrain_angle_msg;
+    terrain_angle_msg.data = terrain_angle * (180 / 3.1415926);
+    pub_terrain_angle.publish(terrain_angle_msg); // 用角度发布地形角
+    std::cout << "desire pitch in deg: " << state.root_euler_d[1] * (180 / 3.1415926) << std::endl;
+    std::cout << "terrain angle: " << terrain_angle << std::endl;
+
+    // 保存计算的地形俯仰角
+    state.terrain_pitch_angle = terrain_angle;
+
+    // MPC规划 
+    ConvexMpc mpc_solver = ConvexMpc(state.q_weights, state.r_weights);
+    mpc_solver.reset();
+
+    // 在第一个时间步长初始化MPC状态函数
+    state.mpc_states << state.root_euler[0], state.root_euler[1], state.root_euler[2],
+            state.root_pos[0], state.root_pos[1], state.root_pos[2],
+            state.root_ang_vel[0], state.root_ang_vel[1], state.root_ang_vel[2],
+            state.root_lin_vel[0], state.root_lin_vel[1], state.root_lin_vel[2],
+            -9.8;
+
+    // previously we use dt passed by outer thread. It turns out that this dt is not stable on hardware.
+    // if the thread is slowed down, dt becomes large, then MPC will output very large force and torque value
+    // which will cause over current. Here we use a new mpc_dt, this should be roughly close to the average dt
+    // of thread 1 
+    double mpc_dt = 0.0025;
+
+    // in simulation, use dt has no problem
+    if (use_sim_time == "true") {
+        mpc_dt = dt;
+    }
+
+    // 初始化一个预测界限内的MPC期望状态函数
+    state.root_lin_vel_d_world = state.root_rot_mat * state.root_lin_vel_d;
+    for (int i = 0; i < PLAN_HORIZON; ++i) {
+        state.mpc_states_d.segment(i * 13, 13)
+                <<
+                state.root_euler_d[0],
+                state.root_euler_d[1],
+                state.root_euler[2] + state.root_ang_vel_d[2] * mpc_dt * (i + 1),
+                state.root_pos[0] + state.root_lin_vel_d_world[0] * mpc_dt * (i + 1),
+                state.root_pos[1] + state.root_lin_vel_d_world[1] * mpc_dt * (i + 1),
+                state.root_pos_d[2],
+                state.root_ang_vel_d[0],
+                state.root_ang_vel_d[1],
+                state.root_ang_vel_d[2],
+                state.root_lin_vel_d_world[0],
+                state.root_lin_vel_d_world[1],
+                0,
                 -9.8;
-
-        // previously we use dt passed by outer thread. It turns out that this dt is not stable on hardware.
-        // if the thread is slowed down, dt becomes large, then MPC will output very large force and torque value
-        // which will cause over current. Here we use a new mpc_dt, this should be roughly close to the average dt
-        // of thread 1 
-        double mpc_dt = 0.0025;
-
-        // in simulation, use dt has no problem
-        if (use_sim_time == "true") {
-            mpc_dt = dt;
-        }
-
-        // 初始化一个预测界限内的MPC期望状态函数
-        state.root_lin_vel_d_world = state.root_rot_mat * state.root_lin_vel_d;
-        for (int i = 0; i < PLAN_HORIZON; ++i) {
-            state.mpc_states_d.segment(i * 13, 13)
-                    <<
-                    state.root_euler_d[0],
-                    state.root_euler_d[1],
-                    state.root_euler[2] + state.root_ang_vel_d[2] * mpc_dt * (i + 1),
-                    state.root_pos[0] + state.root_lin_vel_d_world[0] * mpc_dt * (i + 1),
-                    state.root_pos[1] + state.root_lin_vel_d_world[1] * mpc_dt * (i + 1),
-                    state.root_pos_d[2],
-                    state.root_ang_vel_d[0],
-                    state.root_ang_vel_d[1],
-                    state.root_ang_vel_d[2],
-                    state.root_lin_vel_d_world[0],
-                    state.root_lin_vel_d_world[1],
-                    0,
-                    -9.8;
-        }
-        auto t1 = std::chrono::high_resolution_clock::now();
-
-        // 计算Ac矩阵，适用于整个参考轨迹
-        mpc_solver.calculate_A_mat_c(state.root_euler);
-        auto t2 = std::chrono::high_resolution_clock::now();
-
-        // 对参考轨迹上每一个点计算Bc矩阵
-        for (int i = 0; i < PLAN_HORIZON; i++) {
-            // 计算当前的Bc矩阵
-            mpc_solver.calculate_B_mat_c(state.robot_mass,
-                                         state.trunk_inertia,
-                                         state.root_rot_mat,
-                                         state.foot_pos_abs);
-        
-            // 状态空间离散化, 计算A_d和当前的B_d
-            mpc_solver.state_space_discretization(mpc_dt);
-
-            // 存储当前的B_d矩阵
-            mpc_solver.B_mat_d_list.block<13, 12>(i * 13, 0) = mpc_solver.B_mat_d;
-        }
-        auto t3 = std::chrono::high_resolution_clock::now();
-
-        // 计算QP矩阵
-        mpc_solver.calculate_qp_mats(state);
-        auto t4 = std::chrono::high_resolution_clock::now();
-
-        // 设置OSQP解算器
-        if (!solver.isInitialized()) {
-            solver.settings()->setVerbosity(false);
-            solver.settings()->setWarmStart(true);
-            solver.data()->setNumberOfVariables(NUM_DOF * PLAN_HORIZON);
-            solver.data()->setNumberOfConstraints(MPC_CONSTRAINT_DIM * PLAN_HORIZON);
-            solver.data()->setLinearConstraintsMatrix(mpc_solver.linear_constraints);
-            solver.data()->setHessianMatrix(mpc_solver.hessian);
-            solver.data()->setGradient(mpc_solver.gradient);
-            solver.data()->setLowerBound(mpc_solver.lb);
-            solver.data()->setUpperBound(mpc_solver.ub);
-            solver.initSolver();
-        } else {
-            solver.updateHessianMatrix(mpc_solver.hessian);
-            solver.updateGradient(mpc_solver.gradient);
-            solver.updateLowerBound(mpc_solver.lb);
-            solver.updateUpperBound(mpc_solver.ub);
-        }
-        auto t5 = std::chrono::high_resolution_clock::now();
-
-        // OSQP计算结果
-        solver.solve();
-        auto t6 = std::chrono::high_resolution_clock::now();
-
-        // Ac矩阵计算时间
-        std::chrono::duration<double, std::milli> ms_double_1 = t2 - t1;
-        // Bc矩阵计算时间
-        std::chrono::duration<double, std::milli> ms_double_2 = t3 - t2;
-        // QP矩阵计算时间
-        std::chrono::duration<double, std::milli> ms_double_3 = t4 - t3;
-        // OSQP解算器设置时间
-        std::chrono::duration<double, std::milli> ms_double_4 = t5 - t4;
-        // OSQP解算时间
-        std::chrono::duration<double, std::milli> ms_double_5 = t6 - t5;
-
-        Eigen::VectorXd solution = solver.getSolution();
-
-        // 数据没有错误，将机体坐标系中的地面作用力转化为世界坐标系中
-        for (int i = 0; i < NUM_LEG; ++i) {
-            if (!isnan(solution.segment<3>(i * 3).norm()))
-                foot_forces_grf.block<3, 1>(0, i) = state.root_rot_mat.transpose() * solution.segment<3>(i * 3);
-        }
     }
+    auto t1 = std::chrono::high_resolution_clock::now();
+
+    // 计算Ac矩阵，适用于整个参考轨迹
+    mpc_solver.calculate_A_mat_c(state.root_euler);
+    auto t2 = std::chrono::high_resolution_clock::now();
+
+    // 对参考轨迹上每一个点计算Bc矩阵
+    for (int i = 0; i < PLAN_HORIZON; i++) {
+        // 计算当前的Bc矩阵
+        mpc_solver.calculate_B_mat_c(state.robot_mass,
+                                        state.trunk_inertia,
+                                        state.root_rot_mat,
+                                        state.foot_pos_abs);
+    
+        // 状态空间离散化, 计算A_d和当前的B_d
+        mpc_solver.state_space_discretization(mpc_dt);
+
+        // 存储当前的B_d矩阵
+        mpc_solver.B_mat_d_list.block<13, 12>(i * 13, 0) = mpc_solver.B_mat_d;
+    }
+    auto t3 = std::chrono::high_resolution_clock::now();
+
+    // 计算QP矩阵
+    mpc_solver.calculate_qp_mats(state);
+    auto t4 = std::chrono::high_resolution_clock::now();
+
+    // 设置OSQP解算器
+    if (!solver.isInitialized()) {
+        solver.settings()->setVerbosity(false);
+        solver.settings()->setWarmStart(true);
+        solver.data()->setNumberOfVariables(NUM_DOF * PLAN_HORIZON);
+        solver.data()->setNumberOfConstraints(MPC_CONSTRAINT_DIM * PLAN_HORIZON);
+        solver.data()->setLinearConstraintsMatrix(mpc_solver.linear_constraints);
+        solver.data()->setHessianMatrix(mpc_solver.hessian);
+        solver.data()->setGradient(mpc_solver.gradient);
+        solver.data()->setLowerBound(mpc_solver.lb);
+        solver.data()->setUpperBound(mpc_solver.ub);
+        solver.initSolver();
+    } else {
+        solver.updateHessianMatrix(mpc_solver.hessian);
+        solver.updateGradient(mpc_solver.gradient);
+        solver.updateLowerBound(mpc_solver.lb);
+        solver.updateUpperBound(mpc_solver.ub);
+    }
+    auto t5 = std::chrono::high_resolution_clock::now();
+
+    // OSQP计算结果
+    solver.solve();
+    auto t6 = std::chrono::high_resolution_clock::now();
+
+    // Ac矩阵计算时间
+    std::chrono::duration<double, std::milli> ms_double_1 = t2 - t1;
+    // Bc矩阵计算时间
+    std::chrono::duration<double, std::milli> ms_double_2 = t3 - t2;
+    // QP矩阵计算时间
+    std::chrono::duration<double, std::milli> ms_double_3 = t4 - t3;
+    // OSQP解算器设置时间
+    std::chrono::duration<double, std::milli> ms_double_4 = t5 - t4;
+    // OSQP解算时间
+    std::chrono::duration<double, std::milli> ms_double_5 = t6 - t5;
+
+    Eigen::VectorXd solution = solver.getSolution();
+
+    // 数据没有错误，将机体坐标系中的地面作用力转化为世界坐标系中
+    for (int i = 0; i < NUM_LEG; ++i) {
+        if (!isnan(solution.segment<3>(i * 3).norm()))
+            foot_forces_grf.block<3, 1>(0, i) = state.root_rot_mat.transpose() * solution.segment<3>(i * 3);
+    }
+
     return foot_forces_grf;
 }
 
