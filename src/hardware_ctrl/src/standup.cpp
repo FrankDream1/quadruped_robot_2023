@@ -1,8 +1,8 @@
 #include "ros/ros.h"
 #include "serialPort/SerialPort.h"
 #include <unistd.h>
-#include <hardware_ctrl/motordata.h>
-#include <hardware_ctrl/motorcmd.h>
+#include <unitree_legged_msgs/motordata.h>
+#include <unitree_legged_msgs/motorcmd.h>
 #include "yaml-cpp/yaml.h"
 
 #define SENDRATE        1000    // Hz,节点通过串口下发的频率
@@ -12,18 +12,18 @@ double derta_pos[12]={0};
 double kp[12];
 int tim=200;//站立所用时间，单位0.1s
 double tt;
-void motorCallback(const hardware_ctrl::motordata::ConstPtr& motor_cmd);
+void motorCallback(const unitree_legged_msgs::motordata::ConstPtr& motor_cmd);
 int main(int argc, char** argv) {
   	ros::init(argc, argv, "standup");
   	ros::NodeHandle nh;
   	ros::Rate r(5);
 
-  	ros::Publisher motorctrl = nh.advertise<hardware_ctrl::motorcmd>("/dog_hardware/motorcmd", 10);
-  	ros::Subscriber motorcmd = nh.subscribe<hardware_ctrl::motordata>("/dog_hardware/motordata", 1000, motorCallback);
+  	ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 10);
+  	ros::Subscriber motorcmd = nh.subscribe<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 1000, motorCallback);
 
-    hardware_ctrl::motorcmd motcmd;
+    unitree_legged_msgs::motorcmd motcmd;
     ros::Rate loop_rate(SENDRATE);
-    YAML::Node joint = YAML::LoadFile("/home/guoyunkai/hardware_ctrl/src/hardware_ctrl/config/standup.yaml");
+    YAML::Node joint = YAML::LoadFile("../config/standup.yaml");
     
     if (joint["motorcmd"]) {    // 验证yaml中是否有名为motorcmd的节点
         // 从yaml中读取关节电机数据
@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
     }
     return 0;
 }
-void motorCallback(const hardware_ctrl::motordata::ConstPtr& motor_cmd){
+void motorCallback(const unitree_legged_msgs::motordata::ConstPtr& motor_cmd){
     //接收到控制数据后将其填入下发结构体中
     for (int j=1;j<=12;j++) {
     //  cmd[j-1].motorType = MotorType::Go2;

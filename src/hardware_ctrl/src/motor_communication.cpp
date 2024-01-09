@@ -1,12 +1,12 @@
 #include "ros/ros.h"
 #include "serialPort/SerialPort.h"
 #include <unistd.h>
-#include <hardware_ctrl/motordata.h>
-#include <hardware_ctrl/motorcmd.h>
+#include <unitree_legged_msgs/motordata.h>
+#include <unitree_legged_msgs/motorcmd.h>
 #include "yaml-cpp/yaml.h"
 
 #define SENDRATE        500    // Hz,节点通过串口下发的频率
-void motorCallback(const hardware_ctrl::motorcmd::ConstPtr& motor_cmd);
+void motorCallback(const unitree_legged_msgs::motorcmd::ConstPtr& motor_cmd);
 MotorCmd cmd[12];   // 12个电机的控制命令
 MotorData data[12]; // 12个电机的返回数据
 int maxstep=1;  //电机最大步长
@@ -15,10 +15,10 @@ int main(int argc, char** argv) {
   	ros::init(argc, argv, "motor_communication");
   	ros::NodeHandle nh;
 
-  	ros::Publisher motorpub = nh.advertise<hardware_ctrl::motordata>("/dog_hardware/motordata", 10);
-  	ros::Subscriber motorsub = nh.subscribe<hardware_ctrl::motorcmd>("/dog_hardware/motorcmd", 1000, motorCallback);
+  	ros::Publisher motorpub = nh.advertise<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 10);
+  	ros::Subscriber motorsub = nh.subscribe<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 1000, motorCallback);
         
-  	hardware_ctrl::motordata motorback;
+  	unitree_legged_msgs::motordata motorback;
 
   	SerialPort serial("/dev/ttyUSB0");
     ros::Rate loop_rate(SENDRATE);
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 }
 
 // 回调函数，用来将订阅的控制信息储存在下发消息体里
-void motorCallback(const hardware_ctrl::motorcmd::ConstPtr& motor_cmd) {
+void motorCallback(const unitree_legged_msgs::motorcmd::ConstPtr& motor_cmd) {
     //接收到控制数据后将其填入下发结构体中
     for (int j=1;j<=12;j++) {
      cmd[j-1].motorType = MotorType::Go2;

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>hardware_ctrl</name>
-  <version>0.0.0</version>
+  <version>0.0.1</version>
   <description>The hardware_ctrl package</description>
-  <maintainer email="frank@todo.todo">frank</maintainer>
+  <maintainer email="1747045175@qq.com">frank</maintainer>
   <license>TODO</license>
 
   <depend>roscpp</depend>
@@ -13,4 +13,5 @@
   <depend>sensor_msgs</depend>
   <exec_depend>message_runtime</exec_depend>
   <buildtool_depend>catkin</buildtool_depend>
+  <depend>unitree_legged_msgs</depend>
 </package>

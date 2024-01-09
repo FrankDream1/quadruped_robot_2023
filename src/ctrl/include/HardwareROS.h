@@ -23,8 +23,8 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/Vector3Stamped.h>
-#include <unitree_legged_msgs/motorcmd>
-#include <unitree_legged_msgs/motordata>
+#include <unitree_legged_msgs/motorcmd.h>
+#include <unitree_legged_msgs/motordata.h>
 
 // control parameters
 #include "Param.h"
@@ -33,7 +33,6 @@
 #include "BasicEKF.h"
 #include "Kinematics.h"
 #include "Utils.h"
-#include "comm.h"
 
 #define FOOT_FILTER_WINDOW_SIZE 5
 
@@ -53,7 +52,7 @@ public:
     void joy_callback(const sensor_msgs::Joy::ConstPtr &joy_msg);
 
     // 接受下位机返回数据
-    void receive_low_state();
+    void receive_motor_state(const unitree_legged_msgs::motordata motorup);
 
     // 上位机向下位机发送控制指令
     bool send_cmd();
@@ -72,9 +71,6 @@ private:
 
     sensor_msgs::JointState joint_foot_msg; // 关节及足端信息
     sensor_msgs::Imu imu_msg;   // IMU信息
-
-    UNITREE_LEGGED_SDK::LowState state = {0};
-    UNITREE_LEGGED_SDK::MotorCmd cmd = {0};
 
     std::thread thread_;    // 硬件读取指针
     bool destruct = false;    
@@ -118,6 +114,9 @@ private:
     // 运动学常数列表
     std::vector<Eigen::VectorXd> rho_fix_list;
     std::vector<Eigen::VectorXd> rho_opt_list;
+
+    double PosStopF = (2.146E+9f);
+    double VelStopF = (16000.0f);
 
     // 运动学变量
     Kinematics dog_kin;

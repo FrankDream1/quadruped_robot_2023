@@ -26,24 +26,33 @@ include_directories(
   /usr/local/include/osqp
 )
 
+catkin_package(CATKIN_DEPENDS
+  std_msgs
+  geometry_msgs
+  sensor_msgs 
+  roscpp
+  rospy
+  unitree_legged_msgs
+)
+
 add_library(dog_lib
-  /include/Kinematics.h
-  /src/Kinematics.cpp
-  /include/Params.h
-  /include/CtrlStates.h
-  /src/Utils.cpp
-  /include/Utils.h
-  /src/RobotControl.cpp
-  /include/RobotControl.h
-  /src/BasicEKF.cpp
-  /include/BasicEKF.h
-  /src/ConvexMpc.cpp
-  /include/ConvexMpc.h      
+  include/Kinematics.h
+  src/Kinematics.cpp
+  include/Param.h
+  include/CtrlStates.h
+  src/Utils.cpp
+  include/Utils.h
+  src/RobotControl.cpp
+  include/RobotControl.h
+  src/BasicEKF.cpp
+  include/BasicEKF.h
+  src/ConvexMpc.cpp
+  include/ConvexMpc.h      
 )
 
 add_library(hardware_dog_lib
-  /include/HardwareROS.h
-  /src/HardwareROS.cpp
+  include/HardwareROS.h
+  src/HardwareROS.cpp
 )            
 
 add_executable(mpc_ctrl src/MainHardware.cpp)
