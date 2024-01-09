@@ -29,6 +29,8 @@ class RobotControl {
 public:
     RobotControl();
 
+    RobotControl(ros::NodeHandle &_nh);
+
     // 更新腿部运动模式和计算落足点位置
     void update_plan(CtrlStates &state, double dt);
 
@@ -75,7 +77,7 @@ private:
     visualization_msgs::Marker foot_end_marker[NUM_LEG];
     visualization_msgs::Marker foot_path_marker[NUM_LEG];
 
-    // debug的话题
+    // debug用的
     ros::Publisher pub_terrain_angle;
 
     ros::Publisher pub_foot_pose_target_FL;

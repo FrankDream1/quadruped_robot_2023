@@ -27,38 +27,38 @@ include_directories(
 )
 
 add_library(dog_lib
-  src/include/Kinematics.h
-  src/Kinematics.cpp
-  src/include/Params.h
-  src/include/CtrlStates.h
-  src/Utils.cpp
-  src/include/Utils.h
-  src/RobotControl.cpp
-  src/include/RobotControl.h
-  src/BasicEKF.cpp
-  src/include/BasicEKF.h
-  src/ConvexMpc.cpp
-  src/include/ConvexMpc.h      
+  /include/Kinematics.h
+  /src/Kinematics.cpp
+  /include/Params.h
+  /include/CtrlStates.h
+  /src/Utils.cpp
+  /include/Utils.h
+  /src/RobotControl.cpp
+  /include/RobotControl.h
+  /src/BasicEKF.cpp
+  /include/BasicEKF.h
+  /src/ConvexMpc.cpp
+  /include/ConvexMpc.h      
 )
 
-add_library(gazebo_dog_lib
-  src/GazeboROS.h
-  src/GazeboROS.cpp
+add_library(hardware_dog_lib
+  /include/HardwareROS.h
+  /src/HardwareROS.cpp
 )            
 
-add_executable(mpc_ctrl src/MainGazebo.cpp)
+add_executable(mpc_ctrl src/MainHardware.cpp)
 
 target_link_libraries(dog_lib 
   ${catkin_LIBRARIES}
   OsqpEigen::OsqpEigen
 )
 
-target_link_libraries(gazebo_dog_lib 
+target_link_libraries(hardware_dog_lib 
   dog_lib
 )
 
 target_link_libraries(mpc_ctrl
-  gazebo_dog_lib
+  hardware_dog_lib
   ${catkin_LIBRARIES}
   OsqpEigen::OsqpEigen
 )

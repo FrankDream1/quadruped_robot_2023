@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>hardware_ctrl</name>
+  <version>0.0.0</version>
+  <description>The hardware_ctrl package</description>
+  <maintainer email="frank@todo.todo">frank</maintainer>
+  <license>TODO</license>
+
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <exec_depend>message_runtime</exec_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+</package>

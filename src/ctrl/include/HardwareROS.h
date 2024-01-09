@@ -23,6 +23,8 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/Vector3Stamped.h>
+#include <unitree_legged_msgs/motorcmd>
+#include <unitree_legged_msgs/motordata>
 
 // control parameters
 #include "Param.h"
@@ -31,6 +33,7 @@
 #include "BasicEKF.h"
 #include "Kinematics.h"
 #include "Utils.h"
+#include "comm.h"
 
 #define FOOT_FILTER_WINDOW_SIZE 5
 
@@ -52,9 +55,6 @@ public:
     // 接受下位机返回数据
     void receive_low_state();
 
-    // 接受IMU返回数据
-    void receive_imu();
-
     // 上位机向下位机发送控制指令
     bool send_cmd();
 
@@ -64,26 +64,25 @@ private:
     ros::Publisher pub_joint_cmd; // 关节力矩命令发布者
     ros::Publisher pub_joint_angle; // 关节角度发布者
     ros::Publisher pub_imu; // IMU数据发布者
+    ros::Publisher pub_estimated_pose;  // 估计状态发布者
+    ros::Publisher motor_cmd;   // 上位机发送命令的发布者
 
-    sensor_msgs::JointState joint_foot_msg; // 关节信息
-    sensor_msgs::Imu imu_msg;   // 
-    
-    ros::Subscriber sub_joy_msg;
-    ros::Subscriber sub_downstream; // 订阅
+    ros::Subscriber motor_data; // 下位机反馈数据的订阅者
+    ros::Subscriber sub_joy_msg;    // 控制杆消息订阅者
 
-    // 估计状态发布者
-    ros::Publisher pub_estimated_pose;
+    sensor_msgs::JointState joint_foot_msg; // 关节及足端信息
+    sensor_msgs::Imu imu_msg;   // IMU信息
 
-    // 硬件读取指针
-    std::thread thread_;
+    UNITREE_LEGGED_SDK::LowState state = {0};
+    UNITREE_LEGGED_SDK::MotorCmd cmd = {0};
+
+    std::thread thread_;    // 硬件读取指针
     bool destruct = false;    
 
-    // 腿的顺序
-    Eigen::Matrix<int, NUM_DOF, 1> swap_joint_indices;
-    Eigen::Matrix<int, NUM_LEG, 1> swap_foot_indices;
+    Eigen::Matrix<int, NUM_DOF, 1> swap_joint_indices;  // 腿的顺序变换矩阵
+    Eigen::Matrix<int, NUM_LEG, 1> swap_foot_indices;   // 足端的顺序变换矩阵
 
-    // dog hardware foot force filter
-    Eigen::Matrix<double, NUM_LEG, FOOT_FILTER_WINDOW_SIZE> foot_force_filters;
+    Eigen::Matrix<double, NUM_LEG, FOOT_FILTER_WINDOW_SIZE> foot_force_filters; // 足端力滤波
     Eigen::Matrix<int, NUM_LEG, 1> foot_force_filters_idx;
     Eigen::Matrix<double, NUM_LEG, 1> foot_force_filters_sum;
 
@@ -120,7 +119,7 @@ private:
     std::vector<Eigen::VectorXd> rho_fix_list;
     std::vector<Eigen::VectorXd> rho_opt_list;
 
-    // 正运动学变量
+    // 运动学变量
     Kinematics dog_kin;
 
     // 控制状态变量，包含机器狗运动的状态

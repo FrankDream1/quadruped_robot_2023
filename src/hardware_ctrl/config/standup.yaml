@@ -1,0 +1,121 @@
+motorcmd: 
+ -
+  info:
+    position: FL_hip
+    id: 0
+    mode: 1
+    K_P: 0.0
+    K_W: 0.0
+    Pos: -5.78024
+    W: 0.0
+    T: 0.0
+ -
+  info:
+    position: FL_thigh
+    id: 1
+    mode: 1
+    K_P: 0.0
+    K_W: 0.0    
+    Pos: 0.0431433
+    W: 0.0
+    T: 0.0
+ -
+  info:
+    position: FL_calf
+    id: 2
+    mode: 1
+    K_P: 0.0
+    K_W: 0.0
+    Pos: 0.0431433
+    W: 0.0
+    T: 0.0
+ -
+  info:
+    position: RL_hip
+    id: 3
+    mode: 1
+    K_P: 0.04
+    K_W: 0.0
+    Pos: -1.240609884262085 
+    W: 0.0
+    T: 0.0
+ -
+  info:
+    position: RL_thigh
+    id: 4
+    mode: 1
+    K_P: 0.04
+    K_W: 0.0
+    Pos: 0.25138169527053833
+    W: 0.0
+    T: 0.0
+ -
+  info:
+    position: RL_calf
+    id: 5
+    mode: 1
+    K_P: 0.04
+    K_W: 0.0
+    Pos: -1.051354527473449
+    W: 0.0
+    T: 0.0
+ -
+  info:
+    position: FR_hip
+    id: 6
+    mode: 1
+    K_P: 0.04
+    K_W: 0.0
+    Pos: -2.0889
+    W: 0.0
+    T: 0.0
+ -
+  info:
+    position: FR_thigh
+    id: 7
+    mode: 1
+    K_P: 0.04
+    K_W: 0.0
+    Pos: 1.98248
+    W: 0.0
+    T: 0.0
+ -
+  info:
+    position: FR_calf
+    id: 8
+    mode: 1
+    K_P: 0.04
+    K_W: 0.0
+    Pos: -10.592
+    W: 0.0
+    T: 0.0
+ -
+  info:
+    position: RR_hip
+    id: 9
+    mode: 1
+    K_P: 0.04
+    K_W: 0.0
+    Pos: -4.68939
+    W: 0.0
+    T: 0.0
+ -
+  info:
+    position: RR_thigh
+    id: 10
+    mode: 1
+    K_P: 0.04
+    K_W: 0.0
+    Pos: -2.80777
+    W: 0.0
+    T: 0.0
+ -
+  info:
+    position: RR_calf
+    id: 11
+    mode: 1
+    K_P: 0.04
+    K_W: 0.0
+    Pos: 3.21753
+    W: 0.0
+    T: 0.0
