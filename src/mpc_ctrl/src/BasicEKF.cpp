@@ -187,7 +187,7 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
         P.block<2, 2>(0, 0) /= 10.0;
     }
 
-    // 最终将估计值返回A1CtrlStates& state
+    // 最终将估计值返回CtrlStates& state
     for (int i = 0; i < NUM_LEG; ++i) {
         // 当足端力大于等于50N时认为足端触地
         if (estimated_contacts[i] < 0.5) {
@@ -196,11 +196,9 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
             state.estimated_contacts[i] = true;
         }
     }
-
     // 设置估计质心位置和速度为估计值
     state.estimated_root_pos = x.segment<3>(0);
     state.estimated_root_vel = x.segment<3>(3);
-
     // 设置真实质心位置和线速度为估计值
     state.root_pos = x.segment<3>(0);
     state.root_lin_vel = x.segment<3>(3);

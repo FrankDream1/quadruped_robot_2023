@@ -3,13 +3,17 @@
 HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     nh = _nh;
 
-    pub_joint_cmd = nh.advertise<sensor_msgs::JointState>("/hardware_a1/joint_torque_cmd", 100);
-    pub_joint_angle = nh.advertise<sensor_msgs::JointState>("/hardware_a1/joint_foot", 100);
-    pub_imu = nh.advertise<sensor_msgs::Imu>("/hardware_a1/imu", 100);
-
-    // test
-    motor_cmd = nh.advertise<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 10);
+    // 和电机通讯的ROS话题
+    motor_cmd = nh.advertise<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 100);
     motor_data = nh.subscribe<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 1000, &HardwareROS::receive_motor_state, this);
+
+    // 接受IMU数据的ROS话题
+    imu_data = nh.subscribe<sensor_msgs::Imu>("/dog_hardware/imu", 1000, &HardwareROS::receive_imu_state, this);
+
+    // 调试用的ROS话题
+    pub_joint_cmd = nh.advertise<sensor_msgs::JointState>("/dog_hardware/joint_torque_cmd", 100);
+    pub_joint_angle = nh.advertise<sensor_msgs::JointState>("/dog_hardware/joint_foot", 100);
+    pub_estimated_pose = nh.advertise<nav_msgs::Odometry>("/dog_hardware/estimation_body_pose", 100);
 
     joint_foot_msg.name = {"FL0", "FL1", "FL2",
                            "FR0", "FR1", "FR2",
@@ -20,8 +24,7 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     joint_foot_msg.velocity.resize(NUM_DOF + NUM_LEG);
     joint_foot_msg.effort.resize(NUM_DOF + NUM_LEG);
 
-    pub_estimated_pose = nh.advertise<nav_msgs::Odometry>("/dog_hardware/estimation_body_pose", 100);
-
+    // 接受控制手柄的ROS话题
     sub_joy_msg = nh.subscribe("/joy", 1000, &HardwareROS::joy_callback, this);
 
     joy_cmd_ctrl_state = 0;
@@ -64,7 +67,7 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
 
     //腿的顺序变换
     swap_joint_indices << 0, 1, 2, 6, 7, 8, 3, 4, 5, 9, 10, 11;
-    swap_foot_indices << 1, 0, 3, 2;
+    swap_foot_indices << 0, 2, 1, 3;
 }
 
 bool HardwareROS::update_foot_forces_grf(double dt) {
@@ -148,7 +151,7 @@ bool HardwareROS::main_update(double t, double dt) {
     // 根据计算落足点生成摆动腿曲线
     _root_control.generate_swing_legs_ctrl(dog_ctrl_states, dt);
 
-    // 发布估计值
+    // 发布姿态估计值
     nav_msgs::Odometry estimate_odom;
     estimate_odom.pose.pose.position.x = dog_ctrl_states.estimated_root_pos(0);
     estimate_odom.pose.pose.position.y = dog_ctrl_states.estimated_root_pos(1);
@@ -162,26 +165,26 @@ bool HardwareROS::main_update(double t, double dt) {
 }
 
 void HardwareROS::joy_callback(const sensor_msgs::Joy::ConstPtr &joy_msg) {
-    // left updown
+    // 左摇杆的上下
     joy_cmd_velz = joy_msg->axes[1] * JOY_CMD_BODY_HEIGHT_VEL;
 
-    //A
+    // 按钮A
     if (joy_msg->buttons[0] == 1) {
         joy_cmd_ctrl_state_change_request = true;
     }
 
-    // right updown
+    // 右摇杆的上下
     joy_cmd_velx = joy_msg->axes[3] * JOY_CMD_VELX_MAX;
-    // right horiz
+    // 右摇杆的左右
     joy_cmd_vely = joy_msg->axes[2] * JOY_CMD_VELY_MAX;
-    // left horiz
+    // 左摇杆的左右
     joy_cmd_yaw_rate  = joy_msg->axes[0] * JOY_CMD_YAW_MAX;
-    // cross button, left and right
+    // 十字按钮的左右
     joy_cmd_roll_rate = joy_msg->axes[6] * JOY_CMD_ROLL_MAX * (-1);
-    // cross button, up and down
+    // 十字按钮的上下
     joy_cmd_pitch_rate = joy_msg->axes[7] * JOY_CMD_PITCH_MAX;
 
-    // lb
+    // 按钮Y
     if (joy_msg->buttons[4] == 1) {
         std::cout << "You have pressed the exit button!!!!" << std::endl;
         joy_cmd_exit = true;
@@ -211,65 +214,48 @@ bool HardwareROS::send_cmd() {
     return true;
 }
 
-void HardwareROS::receive_motor_state(const unitree_legged_msgs::motordata motorup) {
+void HardwareROS::receive_motor_state(const unitree_legged_msgs::motordata::ConstPtr &motorup) {
     ros::Time prev = ros::Time::now();
     ros::Time now = ros::Time::now();
     ros::Duration dt(0);
     
     while (destruct == false) {
         // 向dog_ctrl_states中填充数据, 注意state中的顺序是FL, RL, FR, RR, dog_ctrl_states中顺序为FL, FR, RL, RR
-        // 获取IMU数据
-        /* dog_ctrl_states.root_quat = Eigen::Quaterniond(state.imu.quaternion[0],
-                                                      state.imu.quaternion[1],
-                                                      state.imu.quaternion[2],
-                                                      state.imu.quaternion[3]);
-        dog_ctrl_states.root_rot_mat = dog_ctrl_states.root_quat.toRotationMatrix();
-        dog_ctrl_states.root_euler = Utils::quat_to_euler(dog_ctrl_states.root_quat);
-        double yaw_angle = dog_ctrl_states.root_euler[2];
-
-        dog_ctrl_states.root_rot_mat_z = Eigen::AngleAxisd(yaw_angle, Eigen::Vector3d::UnitZ());
-
-        dog_ctrl_states.imu_acc = Eigen::Vector3d(state.imu.accelerometer[0], state.imu.accelerometer[1], state.imu.accelerometer[2]);
-        dog_ctrl_states.imu_ang_vel = Eigen::Vector3d(state.imu.gyroscope[0], state.imu.gyroscope[1], state.imu.gyroscope[2]);
-        dog_ctrl_states.root_ang_vel = dog_ctrl_states.root_rot_mat * dog_ctrl_states.imu_ang_vel; */
-        
-        // 获取关节状态
-        // Get dt (in seconds)
+        // 获取当前时间(s)
         now = ros::Time::now();
         dt = now - prev;
         prev = now;
         double dt_s = dt.toSec();
 
+        // 获取关节状态
         for (int i = 0; i < NUM_DOF; ++i) {
             int swap_i = swap_joint_indices(i);
-            dog_ctrl_states.joint_vel[i] = motorup.W[swap_i];
-            // dog_ctrl_states.joint_vel[i] = (state.motorState[swap_i].q - dog_ctrl_states.joint_pos[i])/dt_s;
-            dog_ctrl_states.joint_pos[i] = motorup.Pos[swap_i];
+            dog_ctrl_states.joint_vel[i] = motorup->W[swap_i];
+            dog_ctrl_states.joint_pos[i] = motorup->Pos[swap_i];
         }
 
-        // publish joint angle and foot force
+        // 估计足端力
+        // to be continued
+
+
+
+
+
+
+        // 发布关节状态
         for (int i = 0; i < NUM_DOF; ++i) {
             joint_foot_msg.position[i] = dog_ctrl_states.joint_pos[i];
             joint_foot_msg.velocity[i] = dog_ctrl_states.joint_vel[i];
         }
         for (int i = 0; i < NUM_LEG; ++i) {
-            // publish plan contacts to help state estimation
+            // 规划的接触状态当作足端速度
             joint_foot_msg.velocity[NUM_DOF + i] = dog_ctrl_states.plan_contacts[i];
+            joint_foot_msg.effort[NUM_DOF + i] = dog_ctrl_states.foot_force[i];
         }
         joint_foot_msg.header.stamp = ros::Time::now();
         pub_joint_angle.publish(joint_foot_msg);
 
-        /* imu_msg.header.stamp = ros::Time::now();
-        imu_msg.angular_velocity.x = state.imu.gyroscope[0];
-        imu_msg.angular_velocity.y = state.imu.gyroscope[1];
-        imu_msg.angular_velocity.z = state.imu.gyroscope[2];
-
-        imu_msg.linear_acceleration.x = state.imu.accelerometer[0];
-        imu_msg.linear_acceleration.y = state.imu.accelerometer[1];
-        imu_msg.linear_acceleration.z = state.imu.accelerometer[2]; 
-        pub_imu.publish(imu_msg); */
-
-        // state estimation
+        // 状态估计
         auto t1 = ros::Time::now();
         if (!dog_estimate.is_inited()) {
             dog_estimate.init_state(dog_ctrl_states);
@@ -279,8 +265,7 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::motordata motor
         auto t2 = ros::Time::now();
         ros::Duration run_dt = t2 - t1;
 
-        // FL, FR, RL, RR
-        // use estimation pos and vel to get foot pos and foot vel in world frame
+        // 使用估计位置和速度来计算世界坐标系中的足端位置和速度
         for (int i = 0; i < NUM_LEG; ++i) {
             dog_ctrl_states.foot_pos_rel.block<3, 1>(0, i) = dog_kin.fk(
                     dog_ctrl_states.joint_pos.segment<3>(3 * i),
@@ -297,11 +282,10 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::motordata motor
             dog_ctrl_states.foot_vel_abs.block<3, 1>(0, i) =
                     dog_ctrl_states.root_rot_mat * dog_ctrl_states.foot_vel_rel.block<3, 1>(0, i);
 
-            // !!!!!!!!!!! notice we use estimation pos and vel here !!!!!!!!!!!!!!!!!!!!!!!!
-            // !!!!!!!!!!! notice we use estimation pos and vel here !!!!!!!!!!!!!!!!!!!!!!!!
-            // !!!!!!!!!!! notice we use estimation pos and vel here !!!!!!!!!!!!!!!!!!!!!!!!
+            // 世界坐标系中位置为附体坐标系位置加上质心位置
             dog_ctrl_states.foot_pos_world.block<3, 1>(0, i) =
                     dog_ctrl_states.foot_pos_abs.block<3, 1>(0, i) + dog_ctrl_states.root_pos;
+            // 世界坐标系中速度为附体坐标系速度加上质心速度
             dog_ctrl_states.foot_vel_world.block<3, 1>(0, i) =
                     dog_ctrl_states.foot_vel_abs.block<3, 1>(0, i) + dog_ctrl_states.root_lin_vel;
         }
@@ -312,4 +296,21 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::motordata motor
             ros::Duration(interval_time - run_dt.toSec()).sleep();
         }
     };
+}
+
+void HardwareROS::receive_imu_state(const sensor_msgs::Imu::ConstPtr &imudata) {
+    // 获取IMU数据
+    dog_ctrl_states.root_quat = Eigen::Quaterniond(imudata->orientation.w,
+                                                   imudata->orientation.x,
+                                                   imudata->orientation.y,
+                                                   imudata->orientation.z);
+    dog_ctrl_states.root_rot_mat = dog_ctrl_states.root_quat.toRotationMatrix();
+    dog_ctrl_states.root_euler = Utils::quat_to_euler(dog_ctrl_states.root_quat);
+    double yaw_angle = dog_ctrl_states.root_euler[2];
+
+    dog_ctrl_states.root_rot_mat_z = Eigen::AngleAxisd(yaw_angle, Eigen::Vector3d::UnitZ());
+
+    dog_ctrl_states.imu_acc = Eigen::Vector3d(imudata->linear_acceleration.x, imudata->linear_acceleration.y, imudata->linear_acceleration.z);
+    dog_ctrl_states.imu_ang_vel = Eigen::Vector3d(imudata->angular_velocity.x, imudata->angular_velocity.y, imudata->angular_velocity.z);
+    dog_ctrl_states.root_ang_vel = dog_ctrl_states.root_rot_mat * dog_ctrl_states.imu_ang_vel;
 }

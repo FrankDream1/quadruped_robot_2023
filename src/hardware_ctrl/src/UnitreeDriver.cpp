@@ -4,7 +4,6 @@
 #include<stdlib.h>
 #include<string>
 
-
 #define FRAMEHEAD           "~"    // 帧头
 #define BACKFRAMELENGTH     15
 #define CONTROLFRAMELENGTH  7
@@ -28,17 +27,14 @@ std::string ByteStream2String(const uint8_t *pByteStream, size_t iStreamLen)
     return sRet;
 }
 
-/**
- * @brief   构造函数
- * @return  当前时间[s]
-**/
+
 static double getCurrentTime()
 {
     ros::Time CurrentTime = ros::Time::now();
     return double(CurrentTime.toSec());
 }
 
-/** @brief 构造函数 **/
+
 UnitreeDriver::UnitreeDriver(const std::string PortName)
 {
     if(PortName == "Null"){
@@ -72,12 +68,8 @@ UnitreeDriver::UnitreeDriver(const std::string PortName)
     }
 }
 
-/** @brief 析构函数 **/
-UnitreeDriver::~UnitreeDriver(){
 
-}
-
-/** @brief 下发控制信息给STM32 */
+// 下发控制信息给STM32
 void UnitreeDriver::SendControlDataToSTM32(){
     std::vector<uint8_t> SendBuffer;
     SendBuffer.resize(7 * 12);
@@ -90,56 +82,41 @@ void UnitreeDriver::SendControlDataToSTM32(){
             case VELMODE:EncodeVelFrame(SendBuffer.data() + 7 * count, count, MotorData[count].TarVel);break;
             case POSMODE:EncodePosFrame(SendBuffer.data() + 7 * count, count, MotorData[count].TarPos);break;
         }
-        VELMODE:EncodeVelFrame(SendBuffer.data() + 7 * count, count, MotorData[count].TarVel);break;
+        EncodeVelFrame(SendBuffer.data() + 7 * count, count, MotorData[count].TarVel);
     }
     /* 发送 */
     if(prvSerial.isOpen()){
         prvSerial.write(SendBuffer);
-        std::cout << "sad" <<std::endl;
+        std::cout << SendBuffer.data() <<std::endl;
     }
     else{
         ROS_ERROR_STREAM("Serial is not open!");
     }
 }
 
-/** @brief 刷新电机数据，如果有数据则返回1，没有数据则返回0 **/
-bool UnitreeDriver::UpdateMotorData(){
-    
-    if(prvSerial.available()){  // 如果缓冲区有数据
+// 刷新电机数据，如果有数据则返回1，没有数据则返回0
+bool UnitreeDriver::UpdateMotorData() { 
+    if (prvSerial.available()) {  // 如果缓冲区有数据
         std::string NewData = prvSerial.read(prvSerial.available());
-        //std::cout << NewData <<std::endl;
         RxBuffer.append(NewData);
-        //std::cout << "one";
-        //std::cout << NewData.length() << std::endl;
-        //for(int i = 0; i < NewData.length(); ++i){
-        //    int t = NewData[i];
-        //    if(t < 0){
-        //        t = t+256;
-        //    }
-        //    std::cerr << " " << t;
-        //}std::cout << std::endl;
+
         int FrameHeadIndex = RxBuffer.find(FRAMEHEAD);
-        while(FrameHeadIndex != RxBuffer.npos){
-            if(RxBuffer.length() - FrameHeadIndex >= BACKFRAMELENGTH){
+
+        while (FrameHeadIndex != RxBuffer.npos) {
+            if (RxBuffer.length() - FrameHeadIndex >= BACKFRAMELENGTH) {
                 uint8_t* pFrameStart = (uint8_t*)(RxBuffer.data()) + FrameHeadIndex;
-                //std::cout << "2123" <<std::endl;
-                //DecodeFrame(pFrameStart);
-                //std::cout << prvCRCCalculate(pFrameStart, BACKFRAMELENGTH) <<std::endl;
-                if(prvCRCCalculate(pFrameStart, BACKFRAMELENGTH) == 0x00){ // 校验通过
-                    //std::cout << "sad" <<std::endl;
+                
+                if (prvCRCCalculate(pFrameStart, BACKFRAMELENGTH) == 0x00) { // 校验通过
                     DecodeFrame(pFrameStart);
                 }
                 RxBuffer.erase(0, FrameHeadIndex + BACKFRAMELENGTH);    // “出队”
                 FrameHeadIndex = RxBuffer.find(FRAMEHEAD);
-            }
-            else{   // 可能没接收完毕，不选择丢弃，暂时保留
+            } else {   // 可能没接收完毕，不选择丢弃，暂时保留
                 break;
             }
         }
-        //std::cout << "2134556" <<std::endl;
         return true;
-    }
-    else{   // 如果缓冲区没有数据，说明可能是跟下位机失联了
+    } else {   // 如果缓冲区没有数据，说明可能是跟下位机失联了
         std::cout << "No Data!" <<std::endl;
         return false;
     }
@@ -234,6 +211,7 @@ void UnitreeDriver::EncodeTorFrame(uint8_t *pData, uint8_t MotorID, float Torque
 void UnitreeDriver::EncodeVelFrame(uint8_t *pData, uint8_t MotorID, float Velocity){
     pData[0] = 0x7E;
     Velocity=2.35;
+    //std::cout << "12312321" <<std::endl;
     pData[1] = (uint8_t)((MotorID & 0x0F) << 4) | (0x03);
     memcpy(&pData[2], &Velocity, 4);
     pData[6] = prvCRCCalculate(pData, 6);   // 包括CRC校验码总共7个字节
@@ -252,26 +230,19 @@ void UnitreeDriver::EncodePosFrame(uint8_t *pData, uint8_t MotorID, float Positi
     pData[6] = prvCRCCalculate(pData, 6);   // 包括CRC校验码总共7个字节
 }
 
-/**
- * @brief   解码反馈信息
- * @param   pData: 完整的一帧的起始指针
- */
+// 解码反馈信息
 void UnitreeDriver::DecodeFrame(uint8_t *pData){
     uint8_t ErrorCode = pData[1] & 0x0F;
-    //std::cout << pData[1] <<std::endl;
-    //std::cout << "happy" <<std::endl;
-    if(ErrorCode){    // 电机发生了错误
-    }
-    else{
+
+    if (ErrorCode) {    // 电机发生了错误
+        std::cout << "Error Decoding!" <<std::endl;
+    } else {
         int8_t MotorID =pData[1]>> 4;
-        int num=MotorID;
+        int num = MotorID;
         //int8_t MotorID = (pData[1] & 0xF0) >> 4;
         //std::cout << num <<std::endl;
         memcpy(&(MotorData[MotorID].CurVel), &pData[2], 8);   // 先速度
-        //std::cout << MotorData[MotorID].CurVel <<std::endl;
         memcpy(&(MotorData[MotorID].CurPos), &pData[6], 8);   //位置
-        //std::cout << MotorData[MotorID].CurPos <<std::endl;
         memcpy(&(MotorData[MotorID].CurTor), &pData[10], 8);   //力矩
-        std::cout << MotorData[MotorID].CurTor <<std::endl;
     }
 }

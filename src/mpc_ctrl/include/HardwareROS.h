@@ -52,7 +52,10 @@ public:
     void joy_callback(const sensor_msgs::Joy::ConstPtr &joy_msg);
 
     // 接受下位机返回数据
-    void receive_motor_state(const unitree_legged_msgs::motordata motorup);
+    void receive_motor_state(const unitree_legged_msgs::motordata::ConstPtr &motorup);
+
+    // 接受IMU返回数据
+    void receive_imu_state(const sensor_msgs::Imu::ConstPtr &imudata);
 
     // 上位机向下位机发送控制指令
     bool send_cmd();
@@ -60,17 +63,16 @@ public:
 private:
     ros::NodeHandle nh;
 
-    ros::Publisher pub_joint_cmd; // 关节力矩命令发布者
-    ros::Publisher pub_joint_angle; // 关节角度发布者
-    ros::Publisher pub_imu; // IMU数据发布者
-    ros::Publisher pub_estimated_pose;  // 估计状态发布者
     ros::Publisher motor_cmd;   // 上位机发送命令的发布者
-
     ros::Subscriber motor_data; // 下位机反馈数据的订阅者
-    ros::Subscriber sub_joy_msg;    // 控制杆消息订阅者
+    ros::Subscriber imu_data;   // IMU数据订阅者
+    ros::Subscriber sub_joy_msg;// 控制杆消息订阅者
 
+    // 调试用的
+    ros::Publisher pub_joint_cmd;           // 关节力矩命令发布者
+    ros::Publisher pub_joint_angle;         // 关节角度发布者
+    ros::Publisher pub_estimated_pose;      // 估计状态发布者
     sensor_msgs::JointState joint_foot_msg; // 关节及足端信息
-    sensor_msgs::Imu imu_msg;   // IMU信息
 
     std::thread thread_;    // 硬件读取指针
     bool destruct = false;    
@@ -115,8 +117,8 @@ private:
     std::vector<Eigen::VectorXd> rho_fix_list;
     std::vector<Eigen::VectorXd> rho_opt_list;
 
-    double PosStopF = (2.146E+9f);
-    double VelStopF = (16000.0f);
+    double PosStopF = 2.146E+9f;    // 禁止速度环
+    double VelStopF = 16000.0f; // 禁止位置环
 
     // 运动学变量
     Kinematics dog_kin;
