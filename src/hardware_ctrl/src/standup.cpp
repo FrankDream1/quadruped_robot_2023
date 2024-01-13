@@ -18,8 +18,8 @@ int main(int argc, char** argv) {
   	ros::NodeHandle nh;
   	ros::Rate r(5);
 
-  	ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 10);
-  	ros::Subscriber motorcmd = nh.subscribe<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 1000, motorCallback);
+  	ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 100);
+  	ros::Subscriber motorcmd = nh.subscribe<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 100, motorCallback);
 
     unitree_legged_msgs::motorcmd motcmd;
     ros::Rate loop_rate(SENDRATE);

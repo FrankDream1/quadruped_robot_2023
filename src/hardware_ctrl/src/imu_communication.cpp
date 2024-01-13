@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "imu_communication");
     ros::NodeHandle nh;
 
-    ros::Publisher pub_imu = nh.advertise<sensor_msgs::Imu>("/dog_hardware/imu", 1000);
+    ros::Publisher pub_imu = nh.advertise<sensor_msgs::Imu>("/dog_hardware/imu", 100);
 
     sensor_msgs::Imu imudata;
 
@@ -76,26 +76,25 @@ int main(int argc, char** argv) {
             if (bytes_read == frame_size) {
                 if (checkCRC(buffer) == true) {
                     DataFrame c_data;
+                    // 拷贝有用数据
                     memcpy(&c_data, &buffer[2], 13 * sizeof(float));
 
+                    // 将数据存入IMU消息中
                     imudata.header.stamp = ros::Time::now();
-
                     imudata.angular_velocity.x = c_data.angularVel[0];
                     imudata.angular_velocity.y = c_data.angularVel[1];
                     imudata.angular_velocity.x = c_data.angularVel[2];
-
                     imudata.linear_acceleration.x = c_data.acceleration[0];
                     imudata.linear_acceleration.y = c_data.acceleration[1];
                     imudata.linear_acceleration.z = c_data.acceleration[2];
-
                     imudata.orientation.w = c_data.quaternion[0];
                     imudata.orientation.x = c_data.quaternion[1];
                     imudata.orientation.y = c_data.quaternion[2];
                     imudata.orientation.z = c_data.quaternion[3];
-
+                    // 发布IMU的ROS话题
                     pub_imu.publish(imudata);
                 } else {
-                    cerr << "CRC 校验失败" << endl;
+                    cerr << "CRC校验失败" << endl;
                 }
             }
         }

@@ -120,7 +120,7 @@ void UpdateSwingLegMotor0KD(void){
 
 
 void DownStreamCallback(const unitree_legged_msgs::motorcmd::ConstPtr& DownStreamMsg){
-    for(uint8_t MotorCount = 0; MotorCount < 12; MotorCount ++){
+    for (uint8_t MotorCount = 0; MotorCount < 12; MotorCount++) {
         UnitreeMotorData_t* pMotorData = &(pMotorDriver->MotorData[MotorCount]);
         
         pMotorData->TarTor=DownStreamMsg->T[MotorCount];

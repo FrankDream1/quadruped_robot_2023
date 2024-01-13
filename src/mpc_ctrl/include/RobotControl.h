@@ -69,33 +69,8 @@ private:
     OsqpEigen::Solver solver;
 
     // ROS debug话题
-    ros::NodeHandle nh;
-    ros::Publisher pub_foot_start[NUM_LEG];
-    ros::Publisher pub_foot_end[NUM_LEG];
-    ros::Publisher pub_foot_path[NUM_LEG];
-    visualization_msgs::Marker foot_start_marker[NUM_LEG];
-    visualization_msgs::Marker foot_end_marker[NUM_LEG];
-    visualization_msgs::Marker foot_path_marker[NUM_LEG];
-
-    // debug用的
+    ros::NodeHandle nh;  
     ros::Publisher pub_terrain_angle;
-
-    ros::Publisher pub_foot_pose_target_FL;
-    ros::Publisher pub_foot_pose_target_FR;
-    ros::Publisher pub_foot_pose_target_RL;
-    ros::Publisher pub_foot_pose_target_RR;
-
-    ros::Publisher pub_foot_pose_target_rel_FL;
-    ros::Publisher pub_foot_pose_target_rel_FR;
-    ros::Publisher pub_foot_pose_target_rel_RL;
-    ros::Publisher pub_foot_pose_target_rel_RR;
-
-    ros::Publisher pub_foot_pose_error_FL;
-    ros::Publisher pub_foot_pose_error_FR;
-    ros::Publisher pub_foot_pose_error_RL;
-    ros::Publisher pub_foot_pose_error_RR;
-
-    ros::Publisher pub_euler;
 
     //MPC最开始10个计数单位不启动
     int mpc_init_counter;
