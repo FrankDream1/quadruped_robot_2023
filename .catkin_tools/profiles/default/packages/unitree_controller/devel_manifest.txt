@@ -1,0 +1,9 @@
+unitree_ros/unitree_controller
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/cmake.lock /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/lib/libunitree_controller.so /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/libunitree_controller.so
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/lib/unitree_controller/unitree_servo /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/unitree_controller/unitree_servo
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/lib/unitree_controller/unitree_move_kinetic /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/unitree_controller/unitree_move_kinetic
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/lib/unitree_controller/unitree_external_force /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/unitree_controller/unitree_external_force
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/lib/pkgconfig/unitree_controller.pc /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/unitree_controller.pc
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/share/unitree_controller/cmake/unitree_controllerConfig.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_controller/cmake/unitree_controllerConfig.cmake
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/share/unitree_controller/cmake/unitree_controllerConfig-version.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_controller/cmake/unitree_controllerConfig-version.cmake

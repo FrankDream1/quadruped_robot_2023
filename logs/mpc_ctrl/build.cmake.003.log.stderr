@@ -1,0 +1,17 @@
+[31m[1mCMake Error[0m at /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/src/mpc_ctrl/CMakeLists.txt:20 (find_package):
+  By not providing "FindOsqpEigen.cmake" in CMAKE_MODULE_PATH this project
+  has asked CMake to find a package configuration file provided by
+  "OsqpEigen", but CMake did not find one.
+
+  Could not find a package configuration file provided by "OsqpEigen" with
+  any of the following names:
+
+    OsqpEigenConfig.cmake
+    osqpeigen-config.cmake
+
+  Add the installation prefix of "OsqpEigen" to CMAKE_PREFIX_PATH or set
+  "OsqpEigen_DIR" to a directory containing one of the above files.  If
+  "OsqpEigen" provides a separate development package or SDK, be sure it has
+  been installed.
+
+

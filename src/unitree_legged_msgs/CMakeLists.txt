@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 2.8.3)
 project(unitree_legged_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
@@ -10,8 +10,20 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
-  motorcmd.msg
-  motordata.msg
+  MotorCmd.msg
+  MotorState.msg
+  BmsCmd.msg
+  BmsState.msg
+  Cartesian.msg
+  IMU.msg
+  LED.msg
+  LowCmd.msg
+  LowState.msg
+  HighCmd.msg
+  HighState.msg
+
+  upstream.msg
+  downstream.msg
 )
 
 generate_messages(
@@ -29,6 +41,11 @@ catkin_package(
   sensor_msgs 
 )
 
+#############
+## Install ##
+#############
+
+# Mark topic names header files for installation
 install(
   DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}

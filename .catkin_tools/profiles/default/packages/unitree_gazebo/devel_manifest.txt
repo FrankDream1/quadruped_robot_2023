@@ -1,0 +1,7 @@
+unitree_ros/unitree_gazebo
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_gazebo/cmake.lock /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_gazebo/lib/libunitreeDrawForcePlugin.so /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/libunitreeDrawForcePlugin.so
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_gazebo/lib/libunitreeFootContactPlugin.so /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/libunitreeFootContactPlugin.so
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_gazebo/lib/pkgconfig/unitree_gazebo.pc /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/unitree_gazebo.pc
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_gazebo/share/unitree_gazebo/cmake/unitree_gazeboConfig-version.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_gazebo/cmake/unitree_gazeboConfig-version.cmake
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_gazebo/share/unitree_gazebo/cmake/unitree_gazeboConfig.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_gazebo/cmake/unitree_gazeboConfig.cmake

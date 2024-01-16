@@ -1,0 +1,5 @@
+unitree_ros/robots/a1_description
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/a1_description/cmake.lock /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/a1_description/lib/pkgconfig/a1_description.pc /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/a1_description.pc
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/a1_description/share/a1_description/cmake/a1_descriptionConfig-version.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/a1_description/cmake/a1_descriptionConfig-version.cmake
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/a1_description/share/a1_description/cmake/a1_descriptionConfig.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/a1_description/cmake/a1_descriptionConfig.cmake

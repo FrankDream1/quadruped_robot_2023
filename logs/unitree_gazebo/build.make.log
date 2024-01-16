@@ -1,0 +1,8 @@
+[35m[1mScanning dependencies of target unitreeFootContactPlugin[0m
+[ 25%] [32mBuilding CXX object CMakeFiles/unitreeFootContactPlugin.dir/plugin/foot_contact_plugin.cc.o[0m
+[35m[1mScanning dependencies of target unitreeDrawForcePlugin[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/unitreeDrawForcePlugin.dir/plugin/draw_force_plugin.cc.o[0m
+[ 75%] [32m[1mLinking CXX shared library /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_gazebo/lib/libunitreeFootContactPlugin.so[0m
+[ 75%] Built target unitreeFootContactPlugin
+[100%] [32m[1mLinking CXX shared library /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_gazebo/lib/libunitreeDrawForcePlugin.so[0m
+[100%] Built target unitreeDrawForcePlugin

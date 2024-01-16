@@ -3,8 +3,10 @@
 #include <ros/ros.h>
 #include <string>
 #include <std_msgs/Float32MultiArray.h>
-#include <unitree_legged_msgs/motordata.h>
-#include <unitree_legged_msgs/motorcmd.h>
+// #include <unitree_legged_msgs/motordata.h>
+// #include <unitree_legged_msgs/motorcmd.h>
+#include <unitree_legged_msgs/downstream.h>
+#include <unitree_legged_msgs/upstream.h>
 #include <thread>
 using namespace std;
 
@@ -29,7 +31,7 @@ static UnitreeDriver *pMotorDriver = nullptr;     //
 static UnitreeDriver *pMotorDriver_rec = nullptr;     //
 static const float LogicZeroPosArray[12] = LOGIZZEROPOSARRAY; // 逻辑零位实际位置数组
 static const float MotorRatioArray[12] = MOTORDIRARRAY;         // 电机正反减速比数组
-void DownStreamCallback(const unitree_legged_msgs::motorcmd::ConstPtr& DownStreamMsg);
+void DownStreamCallback(const unitree_legged_msgs::downstream::ConstPtr& DownStreamMsg);
 void Map_PublishMotorData(ros::Publisher& Pub);
 void NodeUserInit();
 void UpdateSwingLegMotor0KD(void);
@@ -40,8 +42,10 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "STM32_Node");
     ros::NodeHandle nh;
 
-    ros::Publisher UpStreamPub = nh.advertise<unitree_legged_msgs::motordata>("/upstream", UPQUEUESIZE);
-    ros::Subscriber DownStreamSub = nh.subscribe<unitree_legged_msgs::motorcmd>("/downstream", DOWNQUEUESIZE, DownStreamCallback);
+    // ros::Publisher UpStreamPub = nh.advertise<unitree_legged_msgs::motordata>("/upstream", UPQUEUESIZE);
+    // ros::Subscriber DownStreamSub = nh.subscribe<unitree_legged_msgs::motorcmd>("/downstream", DOWNQUEUESIZE, DownStreamCallback);
+    ros::Publisher UpStreamPub = nh.advertise<unitree_legged_msgs::upstream>("/upstream", UPQUEUESIZE);
+    ros::Subscriber DownStreamSub = nh.subscribe<unitree_legged_msgs::downstream>("/downstream", DOWNQUEUESIZE, DownStreamCallback);
     
     //could change any time
     pMotorDriver = new UnitreeDriver("/dev/ttyUSB1");
@@ -138,7 +142,7 @@ void UpdateSwingLegMotor0KD(void){
 }
 
 
-void DownStreamCallback(const unitree_legged_msgs::motorcmd::ConstPtr& DownStreamMsg){
+void DownStreamCallback(const unitree_legged_msgs::downstream::ConstPtr& DownStreamMsg){
     for (uint8_t MotorCount = 0; MotorCount < 12; MotorCount++) {
         //UnitreeMotorData_t* pMotorData = &(pMotorDriver->MotorData[MotorCount]);
         int id;
@@ -158,7 +162,8 @@ void DownStreamCallback(const unitree_legged_msgs::motorcmd::ConstPtr& DownStrea
 
 void Map_PublishMotorData(ros::Publisher& Pub){
     // std_msgs::Float32MultiArray MotorDataArray;
-    unitree_legged_msgs::motordata motorback;
+    //unitree_legged_msgs::motordata motorback;   
+    unitree_legged_msgs::upstream motorback;
     // MotorDataArray.data.clear();
     // MotorDataArray.data.resize(24); // 12位置 + 12速度
     for(uint8_t Count = 0;Count < 12;Count ++){ // 左前后 右前后

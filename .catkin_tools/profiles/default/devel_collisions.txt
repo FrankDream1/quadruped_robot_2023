@@ -1,3 +1,5 @@
 /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/./cmake.lock 523
 /home/guoyunkai/quadruped_robot_2023/devel/./cmake.lock 136
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock 3
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock 26
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/libunitreeDrawForcePlugin.so 1
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/libunitreeFootContactPlugin.so 1

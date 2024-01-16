@@ -1,0 +1,4 @@
+Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/libunitree_legged_control.so
+Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/unitree_legged_control.pc
+Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_legged_control/cmake/unitree_legged_controlConfig-version.cmake
+Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_legged_control/cmake/unitree_legged_controlConfig.cmake

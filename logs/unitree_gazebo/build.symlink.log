@@ -1,0 +1,9 @@
+Warning: Cannot symlink from /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_gazebo/lib/libunitreeDrawForcePlugin.so to existing file /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/libunitreeDrawForcePlugin.so
+Warning: Source hash: f64c25bd70d0e1a23c6af80e034935f7
+Warning: Dest hash: 9e05fb03fac4a122ae8389442b092531
+Warning: Cannot symlink from /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_gazebo/lib/libunitreeFootContactPlugin.so to existing file /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/libunitreeFootContactPlugin.so
+Warning: Source hash: 3455dcce2262c711a358a72b12d248df
+Warning: Dest hash: 2dec2bf5380d3f3a051cbfc68b7b7559
+Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/unitree_gazebo.pc
+Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_gazebo/cmake/unitree_gazeboConfig-version.cmake
+Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_gazebo/cmake/unitree_gazeboConfig.cmake

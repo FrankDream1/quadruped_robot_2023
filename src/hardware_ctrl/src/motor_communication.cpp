@@ -1,8 +1,10 @@
 #include "ros/ros.h"
 #include "serialPort/SerialPort.h"
 #include <unistd.h>
-#include <unitree_legged_msgs/motordata.h>
-#include <unitree_legged_msgs/motorcmd.h>
+// #include <unitree_legged_msgs/motordata.h>
+// #include <unitree_legged_msgs/motorcmd.h>
+#include <unitree_legged_msgs/downstream.h>
+#include <unitree_legged_msgs/upstream.h>
 #include "yaml-cpp/yaml.h"
 
 #define SENDRATE 500    // 节点通过串口下发的频率
@@ -11,16 +13,19 @@ MotorData data[12];     // 12个电机的返回数据
 int maxstep=1;          // 电机最大步长
 double maxkp=0.05;      // 电机最大刚度
 
-void motorCallback(const unitree_legged_msgs::motorcmd::ConstPtr& motor_cmd);
+void motorCallback(const unitree_legged_msgs::downstream::ConstPtr& motor_cmd);
 
 int main(int argc, char** argv) {
   	ros::init(argc, argv, "motor_communication");
   	ros::NodeHandle nh;
 
-  	ros::Publisher motorpub = nh.advertise<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 100);
-  	ros::Subscriber motorsub = nh.subscribe<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 100, motorCallback);
+  	// ros::Publisher motorpub = nh.advertise<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 100);
+  	// ros::Subscriber motorsub = nh.subscribe<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 100, motorCallback);
+    ros::Publisher motorpub = nh.advertise<unitree_legged_msgs::upstream>("/dog_hardware/motordata", 100);
+  	ros::Subscriber motorsub = nh.subscribe<unitree_legged_msgs::downstream>("/dog_hardware/motorcmd", 100, motorCallback);
         
-  	unitree_legged_msgs::motordata motorback;
+  	//unitree_legged_msgs::motordata motorback;
+  	unitree_legged_msgs::upstream motorback;
 
     // 定义串口
   	SerialPort serial("/dev/ttyUSB0");
@@ -86,7 +91,7 @@ int main(int argc, char** argv) {
 }
 
 // 回调函数，用来将订阅的控制信息储存在下发消息体里
-void motorCallback(const unitree_legged_msgs::motorcmd::ConstPtr& motor_cmd) {
+void motorCallback(const unitree_legged_msgs::downstream::ConstPtr& motor_cmd) {
     //接收到控制数据后将其填入下发结构体中
     for (int j = 1; j <= 12; j++) {
         cmd[j-1].motorType = MotorType::Go2;

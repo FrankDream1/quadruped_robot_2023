@@ -1,8 +1,10 @@
 #include "ros/ros.h"
 #include "serialPort/SerialPort.h"
 #include <unistd.h>
-#include <unitree_legged_msgs/motordata.h>
-#include <unitree_legged_msgs/motorcmd.h>
+// #include <unitree_legged_msgs/motordata.h>
+// #include <unitree_legged_msgs/motorcmd.h>
+#include <unitree_legged_msgs/downstream.h>
+#include <unitree_legged_msgs/upstream.h>
 #include "yaml-cpp/yaml.h"
 
 #define SENDRATE 1000   // 节点通过串口下发的频率
@@ -13,7 +15,7 @@ double kp[12];
 int stand_time = 200;  // 站立所用时间，单位0.1s
 double tt;
 
-void motorCallback(const unitree_legged_msgs::motordata::ConstPtr& motor_cmd);
+void motorCallback(const unitree_legged_msgs::upstream::ConstPtr& motor_cmd);
 
 int main(int argc, char** argv) {
   	ros::init(argc, argv, "standup");
@@ -21,15 +23,21 @@ int main(int argc, char** argv) {
   	ros::Rate r(5);
 
   //ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 100);
-    ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::motorcmd>("/downstream", 100);
-  	ros::Subscriber motorcmd = nh.subscribe<unitree_legged_msgs::motordata>("/upstream", 100, motorCallback);
+    // ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::motorcmd>("/downstream", 100);
+  	// ros::Subscriber motorcmd = nh.subscribe<unitree_legged_msgs::motordata>("/upstream", 100, motorCallback);
     //ros::Subscriber motorcmd = nh.subscribe<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 100, motorCallback);
-    unitree_legged_msgs::motorcmd motcmd;
+
+    ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::downstream>("/downstream", 100);
+  	ros::Subscriber motorcmd = nh.subscribe<unitree_legged_msgs::upstream>("/upstream", 100, motorCallback);
+    // unitree_legged_msgs::motorcmd motcmd;
+    unitree_legged_msgs::downstream motcmd;
 
     ros::Rate loop_rate(SENDRATE);
 
-    YAML::Node joint = YAML::LoadFile("/home/guoyunkai/quadruped_robot_2023/src/hardware_ctrl/config/standup.yaml");
-    
+    // YAML::Node joint = YAML::LoadFile("/home/guoyunkai/quadruped_robot_2023/src/hardware_ctrl/config/standup.yaml");
+    YAML::Node joint = YAML::LoadFile("/home/mzx/Desktop/dog/src/hardware_ctrl/config/standup.yaml");
+
+
     if (joint["motorcmd"]) {    // 验证yaml中是否有名为motorcmd的节点
         // 从yaml中读取关节电机数据
         const YAML::Node& dataNode = joint["motorcmd"];
@@ -87,7 +95,7 @@ int main(int argc, char** argv) {
     }
     return 0;
 }
-void motorCallback(const unitree_legged_msgs::motordata::ConstPtr& motor_cmd){
+void motorCallback(const unitree_legged_msgs::upstream::ConstPtr& motor_cmd){
     //接收到控制数据后将其填入下发结构体中
     for (int j = 1; j <= 12; j++) {
     //  cmd[j-1].motorType = MotorType::Go2;

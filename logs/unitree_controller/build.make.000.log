@@ -1,0 +1,16 @@
+[35m[1mScanning dependencies of target unitree_controller[0m
+[ 12%] [32mBuilding CXX object CMakeFiles/unitree_controller.dir/src/body.cpp.o[0m
+[ 25%] [32m[1mLinking CXX shared library /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/lib/libunitree_controller.so[0m
+[ 25%] Built target unitree_controller
+[35m[1mScanning dependencies of target unitree_external_force[0m
+[ 37%] [32mBuilding CXX object CMakeFiles/unitree_external_force.dir/src/external_force.cpp.o[0m
+[35m[1mScanning dependencies of target unitree_move_kinetic[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/unitree_move_kinetic.dir/src/move_publisher.cpp.o[0m
+[ 62%] [32m[1mLinking CXX executable /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/lib/unitree_controller/unitree_external_force[0m
+[ 62%] Built target unitree_external_force
+[35m[1mScanning dependencies of target unitree_servo[0m
+[ 75%] [32mBuilding CXX object CMakeFiles/unitree_servo.dir/src/servo.cpp.o[0m
+[ 87%] [32m[1mLinking CXX executable /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/lib/unitree_controller/unitree_move_kinetic[0m
+[ 87%] Built target unitree_move_kinetic
+[100%] [32m[1mLinking CXX executable /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_controller/lib/unitree_controller/unitree_servo[0m
+[100%] Built target unitree_servo
