@@ -1,4 +1,4 @@
-[31m[1mCMake Error[0m at /home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/mpc_ctrl/CMakeLists.txt:20 (find_package):
+[31m[1mCMake Error[0m at /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/src/mpc_ctrl/CMakeLists.txt:20 (find_package):
   By not providing "FindOsqpEigen.cmake" in CMAKE_MODULE_PATH this project
   has asked CMake to find a package configuration file provided by
   "OsqpEigen", but CMake did not find one.

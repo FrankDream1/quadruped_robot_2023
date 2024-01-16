@@ -1,9 +1,9 @@
 hardware_ctrl
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/hardware_ctrl/cmake.lock /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/./cmake.lock
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/hardware_ctrl/lib/hardware_ctrl/motor_communication /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/lib/hardware_ctrl/motor_communication
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/hardware_ctrl/lib/hardware_ctrl/imu_communication /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/lib/hardware_ctrl/imu_communication
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/hardware_ctrl/lib/hardware_ctrl/STM32_Node /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/lib/hardware_ctrl/STM32_Node
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/hardware_ctrl/lib/hardware_ctrl/dogstandup /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/lib/hardware_ctrl/dogstandup
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/hardware_ctrl/lib/pkgconfig/hardware_ctrl.pc /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/lib/pkgconfig/hardware_ctrl.pc
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/hardware_ctrl/share/hardware_ctrl/cmake/hardware_ctrlConfig.cmake /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/share/hardware_ctrl/cmake/hardware_ctrlConfig.cmake
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/hardware_ctrl/share/hardware_ctrl/cmake/hardware_ctrlConfig-version.cmake /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/share/hardware_ctrl/cmake/hardware_ctrlConfig-version.cmake
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/hardware_ctrl/cmake.lock /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/hardware_ctrl/lib/hardware_ctrl/motor_communication /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/hardware_ctrl/motor_communication
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/hardware_ctrl/lib/hardware_ctrl/imu_communication /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/hardware_ctrl/imu_communication
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/hardware_ctrl/lib/hardware_ctrl/STM32_Node /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/hardware_ctrl/STM32_Node
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/hardware_ctrl/lib/hardware_ctrl/dogstandup /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/hardware_ctrl/dogstandup
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/hardware_ctrl/lib/pkgconfig/hardware_ctrl.pc /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/hardware_ctrl.pc
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/hardware_ctrl/share/hardware_ctrl/cmake/hardware_ctrlConfig.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/hardware_ctrl/cmake/hardware_ctrlConfig.cmake
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/hardware_ctrl/share/hardware_ctrl/cmake/hardware_ctrlConfig-version.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/hardware_ctrl/cmake/hardware_ctrlConfig-version.cmake

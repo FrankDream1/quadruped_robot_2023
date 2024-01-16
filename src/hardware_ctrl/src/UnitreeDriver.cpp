@@ -9,7 +9,7 @@
 #define BACKFRAMELENGTH     15
 #define CONTROLFRAMELENGTH  7
 #define DriverBaudRate      921600  // 驱动板使用的串口波特率
-#define USERPASSWORD        "111111"
+#define USERPASSWORD        "081811gyk2002"
 using namespace std;
 
 std::string ByteStream2String(const uint8_t *pByteStream, size_t iStreamLen)

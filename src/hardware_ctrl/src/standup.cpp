@@ -22,13 +22,13 @@ int main(int argc, char** argv) {
 
   //ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 100);
     ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::motorcmd>("/downstream", 100);
-  	ros::Subscriber motorcmd = nh.subscribe<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 100, motorCallback);
-
+  	ros::Subscriber motorcmd = nh.subscribe<unitree_legged_msgs::motordata>("/upstream", 100, motorCallback);
+    //ros::Subscriber motorcmd = nh.subscribe<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 100, motorCallback);
     unitree_legged_msgs::motorcmd motcmd;
 
     ros::Rate loop_rate(SENDRATE);
 
-    YAML::Node joint = YAML::LoadFile("/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/config/standup.yaml");
+    YAML::Node joint = YAML::LoadFile("/home/guoyunkai/quadruped_robot_2023/src/hardware_ctrl/config/standup.yaml");
     
     if (joint["motorcmd"]) {    // 验证yaml中是否有名为motorcmd的节点
         // 从yaml中读取关节电机数据

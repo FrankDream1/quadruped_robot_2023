@@ -44,8 +44,8 @@ int main(int argc, char **argv) {
     ros::Subscriber DownStreamSub = nh.subscribe<unitree_legged_msgs::motorcmd>("/downstream", DOWNQUEUESIZE, DownStreamCallback);
     
     //could change any time
-    pMotorDriver = new UnitreeDriver("/dev/ttyUSB10");
-    pMotorDriver_rec = new UnitreeDriver("/dev/ttyUSB9");
+    pMotorDriver = new UnitreeDriver("/dev/ttyUSB1");
+    pMotorDriver_rec = new UnitreeDriver("/dev/ttyUSB0");
     //NodeUserInit(); // 参数初始化
     ros::Rate loop_rate(SENDRATE);
 
@@ -81,8 +81,8 @@ int main(int argc, char **argv) {
 
         printf("Send message\n");
         //Send message to stm32
-        UpdateSwingLegMotor0KD();
-        pMotorDriver->SendControlDatasToSTM32(); // 下发新的数据到STM32 
+        // UpdateSwingLegMotor0KD();
+        pMotorDriver->SendControlDataToSTM32(); // 下发新的数据到STM32 
 
         printf("\n\n\n");
         

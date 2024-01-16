@@ -1,13 +1,13 @@
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/build/catkin_tools_prebuild
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/setup.zsh /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/./setup.zsh
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/local_setup.bash /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/./local_setup.bash
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/setup.sh /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/./setup.sh
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/setup.bash /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/./setup.bash
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/cmake.lock /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/./cmake.lock
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/local_setup.sh /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/./local_setup.sh
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/env.sh /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/./env.sh
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/local_setup.zsh /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/./local_setup.zsh
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/_setup_util.py /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/./_setup_util.py
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/lib/pkgconfig/catkin_tools_prebuild.pc /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/lib/pkgconfig/catkin_tools_prebuild.pc
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
-/home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake /home/mzx/Desktop/yuanshi/quadruped_robot_2023/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/build/catkin_tools_prebuild
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/setup.zsh /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./setup.zsh
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/local_setup.bash /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./local_setup.bash
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/setup.sh /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./setup.sh
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/setup.bash /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./setup.bash
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/cmake.lock /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/local_setup.sh /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./local_setup.sh
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/env.sh /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./env.sh
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/local_setup.zsh /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./local_setup.zsh
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/_setup_util.py /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./_setup_util.py
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/lib/pkgconfig/catkin_tools_prebuild.pc /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/catkin_tools_prebuild.pc
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
+/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/catkin_tools_prebuild/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake

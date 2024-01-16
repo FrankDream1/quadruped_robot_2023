@@ -1,8 +1,0 @@
-[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:[m[K In function ‘[01m[Kint main(int, char**)[m[K’:
-[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:70:9:[m[K [01;31m[Kerror: [m[K‘[01m[KpMotorDriver_rec[m[K’ was not declared in this scope; did you mean ‘[01m[KpMotorDriver_rev[m[K’?
-   70 |         [01;31m[KpMotorDriver_rec[m[K->UpdateMotorData();
-      |         [01;31m[K^~~~~~~~~~~~~~~~[m[K
-      |         [32m[KpMotorDriver_rev[m[K
-make[2]: *** [CMakeFiles/STM32_Node.dir/build.make:63: CMakeFiles/STM32_Node.dir/src/stm32_communication.cpp.o] Error 1
-make[1]: *** [CMakeFiles/Makefile2:176: CMakeFiles/STM32_Node.dir/all] Error 2
-make: *** [Makefile:141: all] Error 2
