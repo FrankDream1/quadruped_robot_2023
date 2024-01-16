@@ -5,6 +5,9 @@
 #include <std_msgs/Float32MultiArray.h>
 #include <unitree_legged_msgs/motordata.h>
 #include <unitree_legged_msgs/motorcmd.h>
+#include <thread>
+using namespace std;
+
 
 #define SENDRATE        100    // 节点通过串口下发的频率
 #define UPQUEUESIZE     10     // UpQueue长度
@@ -23,6 +26,7 @@
 #define MOTORDIRARRAY       {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}                  
 
 static UnitreeDriver *pMotorDriver = nullptr;     //
+static UnitreeDriver *pMotorDriver_rec = nullptr;     //
 static const float LogicZeroPosArray[12] = LOGIZZEROPOSARRAY; // 逻辑零位实际位置数组
 static const float MotorRatioArray[12] = MOTORDIRARRAY;         // 电机正反减速比数组
 void DownStreamCallback(const unitree_legged_msgs::motorcmd::ConstPtr& DownStreamMsg);
@@ -31,6 +35,7 @@ void NodeUserInit();
 void UpdateSwingLegMotor0KD(void);
 void LowerTimercallback(const ros::TimerEvent&);
 
+
 int main(int argc, char **argv) {
     ros::init(argc, argv, "STM32_Node");
     ros::NodeHandle nh;
@@ -38,43 +43,57 @@ int main(int argc, char **argv) {
     ros::Publisher UpStreamPub = nh.advertise<unitree_legged_msgs::motordata>("/upstream", UPQUEUESIZE);
     ros::Subscriber DownStreamSub = nh.subscribe<unitree_legged_msgs::motorcmd>("/downstream", DOWNQUEUESIZE, DownStreamCallback);
     
-    pMotorDriver = new UnitreeDriver("/dev/ttyUSB0");
+    //could change any time
+    pMotorDriver = new UnitreeDriver("/dev/ttyUSB10");
+    pMotorDriver_rec = new UnitreeDriver("/dev/ttyUSB9");
     //NodeUserInit(); // 参数初始化
     ros::Rate loop_rate(SENDRATE);
 
+    // //build multiple thread
+    // PubThread (pMotorDriver->SendControlDataToSTM32());
+    // PubThread.join();
+
     while (ros::ok()) {
         // 更新电机状态
-        pMotorDriver->UpdateMotorData();
-        //填充数据到发送消息中
-        //Map_PublishMotorData(UpStreamPub);                      // 发布电机当前数据
+        pMotorDriver_rec->UpdateMotorData();
+        // 填充数据到发送消息中
+        Map_PublishMotorData(UpStreamPub);                      // 发布电机当前数据
 
         // 显示下位机上发的数据
         std::cout << "MotorData_Pos:";
         for (int i = 0; i < 12; i++) {
-            std::cout << pMotorDriver->MotorData[i].CurPos << " ";
+            std::cout << pMotorDriver_rec->MotorData[i].CurPos << " ";
         }
         std::cout << std::endl;
         std::cout << "MotorData_Vel:";
         for (int i = 0; i < 12; i++) {
-            std::cout << pMotorDriver->MotorData[i].CurVel << " ";
+            std::cout << pMotorDriver_rec->MotorData[i].CurVel << " ";
         }
         std::cout << std::endl;
         std::cout << "MotorData_Tor:";
         for (int i = 0; i < 12; i++) {
-            std::cout << pMotorDriver->MotorData[i].CurTor << " ";
+            std::cout << pMotorDriver_rec->MotorData[i].CurTor << " ";
         }
         std::cout << std::endl;
         std::cout << std::endl;
         
-        //ros::spinOnce(); // 刷新控制数据(调用本函数之后，会直接调用CallBack函数，所以应该是不用担心数据还没来得及刷新的问题的)
+        ros::spinOnce(); // 刷新控制数据(调用本函数之后，会直接调用CallBack函数，所以应该是不用担心数据还没来得及刷新的问题的)
 
-        /* UpdateSwingLegMotor0KD();
-        pMotorDriver->SendControlDataToSTM32(); // 下发新的数据到STM32 */
+        printf("Send message\n");
+        //Send message to stm32
+        UpdateSwingLegMotor0KD();
+        pMotorDriver->SendControlDatasToSTM32(); // 下发新的数据到STM32 
 
+        printf("\n\n\n");
+        
         loop_rate.sleep();
+        
     }
 }
         
+
+
+
 // 节点部分数据初始化函数
 void NodeUserInit(void){
     pMotorDriver->SetKPKD(0, MOTOR0KP, MOTOR0KD);
@@ -121,11 +140,16 @@ void UpdateSwingLegMotor0KD(void){
 
 void DownStreamCallback(const unitree_legged_msgs::motorcmd::ConstPtr& DownStreamMsg){
     for (uint8_t MotorCount = 0; MotorCount < 12; MotorCount++) {
-        UnitreeMotorData_t* pMotorData = &(pMotorDriver->MotorData[MotorCount]);
-        
+        //UnitreeMotorData_t* pMotorData = &(pMotorDriver->MotorData[MotorCount]);
+        int id;
+        id=DownStreamMsg->id[MotorCount];
+        UnitreeMotorData_t_sendToStm32* pMotorData = &(pMotorDriver->data_to_stm32[id]);
+        //DownStreamMsg->id[MotorCount];
         pMotorData->TarTor=DownStreamMsg->T[MotorCount];
         pMotorData->TarVel=DownStreamMsg->W[MotorCount];
         pMotorData->TarPos=DownStreamMsg->Pos[MotorCount];
+        pMotorData->KP = DownStreamMsg->K_P[MotorCount];
+        pMotorData->KD = DownStreamMsg->K_W[MotorCount];
         // pMotorData->KP=DownStreamMsg.K_P[MotorCount];
         // pMotorData->KD=DownStreamMsg.K_W[MotorCount];
     }
@@ -139,12 +163,12 @@ void Map_PublishMotorData(ros::Publisher& Pub){
     // MotorDataArray.data.resize(24); // 12位置 + 12速度
     for(uint8_t Count = 0;Count < 12;Count ++){ // 左前后 右前后
         /* 实际->逻辑 */
-       memcpy(&(motorback.Pos[Count]), &(pMotorDriver->MotorData[Count].CurPos), 8);
-       memcpy(&(motorback.W[Count]), &(pMotorDriver->MotorData[Count].CurVel), 8);
-       memcpy(&(motorback.T[Count]), &(pMotorDriver->MotorData[Count].CurTor), 8);
+       memcpy(&(motorback.Pos[Count]), &(pMotorDriver_rec->MotorData[Count].CurPos), 4);
+       memcpy(&(motorback.W[Count]), &(pMotorDriver_rec->MotorData[Count].CurVel), 4);
+       memcpy(&(motorback.T[Count]), &(pMotorDriver_rec->MotorData[Count].CurTor), 4);
+       memcpy(&(motorback.id[Count]), &Count, 1);
         // MotorDataArray.data[Count] = (pMotorDriver->MotorData[Count].CurPos - LogicZeroPosArray[Count]) / MotorRatioArray[Count];
         // MotorDataArray.data[12 + Count] = pMotorDriver->MotorData[Count].CurVel / MotorRatioArray[Count];
     }
-    //Pub.publish(MotorDataArray);  // 发布
     Pub.publish(motorback);
 }

@@ -1,0 +1,15 @@
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:[m[K In function ‘[01m[Kvoid test_crc_8()[m[K’:
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:89:49:[m[K [01;31m[Kerror: [m[Kcannot convert ‘[01m[Kuint8_t (*)[22][m[K’ {aka ‘[01m[Kunsigned char (*)[22][m[K’} to ‘[01m[Kuint8_t*[m[K’ {aka ‘[01m[Kunsigned char*[m[K’}
+   89 |     uint8_t crc = pMotorDriver->prvCRCCalculate([01;31m[K&data[m[K, 22);
+      |                                                 [01;31m[K^~~~~[m[K
+      |                                                 [01;31m[K|[m[K
+      |                                                 [01;31m[Kuint8_t (*)[22] {aka unsigned char (*)[22]}[m[K
+In file included from [01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:1[m[K:
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/UnitreeDriver.h:51:42:[m[K [01;36m[Knote: [m[K  initializing argument 1 of ‘[01m[Kuint8_t UnitreeDriver::prvCRCCalculate(uint8_t*, uint8_t)[m[K’
+   51 |         uint8_t prvCRCCalculate([01;36m[Kuint8_t *pStr[m[K, uint8_t Len);
+      |                                 [01;36m[K~~~~~~~~~^~~~[m[K
+make[2]: *** [CMakeFiles/STM32_Node.dir/build.make:63: CMakeFiles/STM32_Node.dir/src/stm32_communication.cpp.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [CMakeFiles/Makefile2:176: CMakeFiles/STM32_Node.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:141: all] Error 2

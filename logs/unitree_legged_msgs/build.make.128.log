@@ -1,0 +1,23 @@
+[  0%] Built target sensor_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[  0%] Built target sensor_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target geometry_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[  0%] Built target sensor_msgs_generate_messages_cpp
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target sensor_msgs_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target _unitree_legged_msgs_generate_messages_check_deps_motordata
+[  0%] Built target sensor_msgs_generate_messages_eus
+[  0%] Built target _unitree_legged_msgs_generate_messages_check_deps_motorcmd
+[  0%] Built target geometry_msgs_generate_messages_eus
+[ 41%] Built target unitree_legged_msgs_generate_messages_lisp
+[ 41%] Built target unitree_legged_msgs_generate_messages_eus
+[ 58%] Built target unitree_legged_msgs_generate_messages_nodejs
+[ 75%] Built target unitree_legged_msgs_generate_messages_cpp
+[100%] Built target unitree_legged_msgs_generate_messages_py
+[100%] Built target unitree_legged_msgs_generate_messages

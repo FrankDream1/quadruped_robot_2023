@@ -1,5 +1,6 @@
 <!-- launch 标签是 launch 文件的根节点，它是其他子标签的容器，没有其他特殊功能。 -->
 <launch>
-	<node pkg="hardware_ctrl" type="motor_communication" name="motor_communication" respawn="true" output="screen"/>
-    <node pkg="hardware_ctrl" type="dogstandup" name="dogstandup" respawn="true" output="screen"/>
+	<!-- <node pkg="hardware_ctrl" type="motor_communication" name="motor_communication" respawn="true" output="screen"/> -->
+    <node pkg="hardware_ctrl" type="dogstandup" name="dogstandup" output="screen"/>
+    <node pkg="hardware_ctrl" type="STM32_Node" name="stm32" output="screen"/>
 </launch>

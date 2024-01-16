@@ -3,12 +3,14 @@
 #include<iostream>
 #include<stdlib.h>
 #include<string>
+#include <thread>
 
 #define FRAMEHEAD           "~"    // 帧头
 #define BACKFRAMELENGTH     15
 #define CONTROLFRAMELENGTH  7
 #define DriverBaudRate      921600  // 驱动板使用的串口波特率
-#define USERPASSWORD        "081811gyk2002"
+#define USERPASSWORD        "111111"
+using namespace std;
 
 std::string ByteStream2String(const uint8_t *pByteStream, size_t iStreamLen)
 {
@@ -68,30 +70,55 @@ UnitreeDriver::UnitreeDriver(const std::string PortName)
     }
 }
 
+float cnt_c=3;
 
 // 下发控制信息给STM32
 void UnitreeDriver::SendControlDataToSTM32(){
     std::vector<uint8_t> SendBuffer;
-    SendBuffer.resize(7 * 12);
-    /* 编码 */
-    for(uint8_t count = 0;count < 12;count ++){
-        switch(MotorData[count].MotionMode){
-            case DISABLE:EncodeAbleFrame(SendBuffer.data() + 7 * count, count, false);break;
-            case TORMODE:EncodeTorFrame(SendBuffer.data() + 7 * count, count, MotorData[count].TarTor);break;
-            case SWING_TORMODE:EncodeTorFrame(SendBuffer.data() + 7 * count, count, MotorData[count].TarTor);break;
-            case VELMODE:EncodeVelFrame(SendBuffer.data() + 7 * count, count, MotorData[count].TarVel);break;
-            case POSMODE:EncodePosFrame(SendBuffer.data() + 7 * count, count, MotorData[count].TarPos);break;
-        }
-        EncodeVelFrame(SendBuffer.data() + 7 * count, count, MotorData[count].TarVel);
-    }
+    SendBuffer.resize(23 * 12);
     /* 发送 */
+    int pos = 23;
+    for(int i = 0; i < 12; i++)
+    {
+        
+        // data_to_stm32[i].TarTor = 0.4;
+        // data_to_stm32[i].TarVel = 0;
+        // data_to_stm32[i].TarPos = 3.14;
+        // data_to_stm32[i].KP = 0.0;
+        // data_to_stm32[i].KD = 0.0;
+        SendBuffer.data()[0+i*pos] = 0x7e;
+        SendBuffer.data()[1+i*pos] = i << 4;
+        memcpy(&SendBuffer.data()[2+i*pos], &data_to_stm32[i].TarTor, 4);
+        memcpy(&SendBuffer.data()[6+i*pos], &data_to_stm32[i].TarVel, 4);
+        memcpy(&SendBuffer.data()[10+i*pos], &data_to_stm32[i].TarPos, 4);
+        memcpy(&SendBuffer.data()[14+i*pos], &data_to_stm32[i].KP, 4);
+        memcpy(&SendBuffer.data()[18+i*pos], &data_to_stm32[i].KD, 4);
+        data_to_stm32[i].crc8 = prvCRCCalculate(&SendBuffer.data()[0+i*pos], 22);
+        memcpy(&SendBuffer.data()[22+i*pos], &data_to_stm32[i].crc8, 1);
+
+        cout << "data_to_stm32[i].id: " << i << endl;
+        cout << "data_to_stm32[i].TarTor: " << data_to_stm32[i].TarTor << endl;
+        cout << "data_to_stm32[i].TarVel: " << data_to_stm32[i].TarVel << endl;
+        cout << "data_to_stm32[i].TarPos: " << data_to_stm32[i].TarPos << endl;
+        cout << "data_to_stm32[i].KP: " << data_to_stm32[i].KP << endl;
+        cout << "data_to_stm32[i].KD: " << data_to_stm32[i].KD << endl;
+    }
+    
+    // printf("SendBuffer: %s\n\n\n", ByteStream2String(SendBuffer.data(), 23*12).data()); //
+
+
     if(prvSerial.isOpen()){
-        prvSerial.write(SendBuffer);
-        std::cout << SendBuffer.data() <<std::endl;
-    }
-    else{
-        ROS_ERROR_STREAM("Serial is not open!");
-    }
+            prvSerial.write(SendBuffer);
+            //std::cout << SendBuffer.data() <<std::endl;
+            // printf("\n\ni = %d, crc8 = %d\n", i, data_to_stm32[i].crc8);
+            // printf("SendBuffer: %s\n\n\n", ByteStream2String(SendBuffer.data(), 23*12).data()); //
+            SendBuffer.clear();
+        }
+        else{
+            ROS_ERROR_STREAM("Serial is not open!");
+        }
+
+    
 }
 
 // 刷新电机数据，如果有数据则返回1，没有数据则返回0
@@ -128,14 +155,16 @@ bool UnitreeDriver::UpdateMotorData() {
             KP KD：如所示
  */
 void UnitreeDriver::SetKPKD(uint8_t MotorID, float KP, float KD){
-    std::vector<uint8_t> KPKDSendBuffer;
-    KPKDSendBuffer.resize(7);
-    EncodeParaFrame(KPKDSendBuffer.data(), MotorID, KP, KD);
-    if(prvSerial.isOpen())
-        prvSerial.write(KPKDSendBuffer);
-    else{
-        // ROS_ERROR_STREAM("Serial is not open!");
-    }
+    // std::vector<uint8_t> KPKDSendBuffer;
+    // KPKDSendBuffer.resize(7);
+    // EncodeParaFrame(KPKDSendBuffer.data(), MotorID, KP, KD);
+    // if(prvSerial.isOpen())
+    //     prvSerial.write(KPKDSendBuffer);
+    // else{
+    //     // ROS_ERROR_STREAM("Serial is not open!");
+    // }
+    data_to_stm32[MotorID].KP = KP;
+    data_to_stm32[MotorID].KD = KD;
 }
 
 /**

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mpc_ctrl</name>
+  <version>0.0.1</version>
+  <description>The mpc_ctrl package</description>
+  <maintainer email="1747045175@qq.com">Frank</maintainer>
+  <license>TODO</license>
+
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <exec_depend>message_runtime</exec_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>unitree_legged_msgs</depend>
+</package>

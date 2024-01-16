@@ -1,0 +1,152 @@
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:9:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\346[m[K’ in program
+   69 |         [01;31m[K�[m[K��新电机状态
+      |         [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:10:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\233[m[K’ in program
+   69 |         �[01;31m[K�[m[K�新电机状态
+      |          [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:11:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\264[m[K’ in program
+   69 |         �[01;31m[K�[m[K新电机状态
+      |           [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:12:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\346[m[K’ in program
+   69 |         更[01;31m[K�[m[K��电机状态
+      |            [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:13:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\226[m[K’ in program
+   69 |         更�[01;31m[K�[m[K�电机状态
+      |             [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:14:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\260[m[K’ in program
+   69 |         更�[01;31m[K�[m[K电机状态
+      |              [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:15:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\347[m[K’ in program
+   69 |         更新[01;31m[K�[m[K��机状态
+      |               [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:16:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\224[m[K’ in program
+   69 |         更新�[01;31m[K�[m[K�机状态
+      |                [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:17:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\265[m[K’ in program
+   69 |         更新�[01;31m[K�[m[K机状态
+      |                 [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:18:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\346[m[K’ in program
+   69 |         更新电[01;31m[K�[m[K��状态
+      |                  [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:19:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\234[m[K’ in program
+   69 |         更新电�[01;31m[K�[m[K�状态
+      |                   [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:20:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\272[m[K’ in program
+   69 |         更新电�[01;31m[K�[m[K状态
+      |                    [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:21:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\347[m[K’ in program
+   69 |         更新电机[01;31m[K�[m[K��态
+      |                     [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:22:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\212[m[K’ in program
+   69 |         更新电机�[01;31m[K�[m[K�态
+      |                      [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:23:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\266[m[K’ in program
+   69 |         更新电机�[01;31m[K�[m[K态
+      |                       [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:24:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\346[m[K’ in program
+   69 |         更新电机状[01;31m[K�[m[K��
+      |                        [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:25:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\200[m[K’ in program
+   69 |         更新电机状�[01;31m[K�[m[K�
+      |                         [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:69:26:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\201[m[K’ in program
+   69 |         更新电机状�[01;31m[K�[m[K
+      |                          [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:9:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\345[m[K’ in program
+   71 |         [01;31m[K�[m[K��充数据到发送消息中
+      |         [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:10:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\241[m[K’ in program
+   71 |         �[01;31m[K�[m[K�充数据到发送消息中
+      |          [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:11:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\253[m[K’ in program
+   71 |         �[01;31m[K�[m[K充数据到发送消息中
+      |           [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:12:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\345[m[K’ in program
+   71 |         填[01;31m[K�[m[K��数据到发送消息中
+      |            [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:13:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\205[m[K’ in program
+   71 |         填�[01;31m[K�[m[K�数据到发送消息中
+      |             [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:14:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\205[m[K’ in program
+   71 |         填�[01;31m[K�[m[K数据到发送消息中
+      |              [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:15:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\346[m[K’ in program
+   71 |         填充[01;31m[K�[m[K��据到发送消息中
+      |               [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:16:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\225[m[K’ in program
+   71 |         填充�[01;31m[K�[m[K�据到发送消息中
+      |                [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:17:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\260[m[K’ in program
+   71 |         填充�[01;31m[K�[m[K据到发送消息中
+      |                 [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:18:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\346[m[K’ in program
+   71 |         填充数[01;31m[K�[m[K��到发送消息中
+      |                  [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:19:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\215[m[K’ in program
+   71 |         填充数�[01;31m[K�[m[K�到发送消息中
+      |                   [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:20:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\256[m[K’ in program
+   71 |         填充数�[01;31m[K�[m[K到发送消息中
+      |                    [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:21:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\345[m[K’ in program
+   71 |         填充数据[01;31m[K�[m[K��发送消息中
+      |                     [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:22:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\210[m[K’ in program
+   71 |         填充数据�[01;31m[K�[m[K�发送消息中
+      |                      [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:23:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\260[m[K’ in program
+   71 |         填充数据�[01;31m[K�[m[K发送消息中
+      |                       [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:24:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\345[m[K’ in program
+   71 |         填充数据到[01;31m[K�[m[K��送消息中
+      |                        [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:25:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\217[m[K’ in program
+   71 |         填充数据到�[01;31m[K�[m[K�送消息中
+      |                         [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:26:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\221[m[K’ in program
+   71 |         填充数据到�[01;31m[K�[m[K送消息中
+      |                          [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:27:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\351[m[K’ in program
+   71 |         填充数据到发[01;31m[K�[m[K��消息中
+      |                           [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:28:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\200[m[K’ in program
+   71 |         填充数据到发�[01;31m[K�[m[K�消息中
+      |                            [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:29:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\201[m[K’ in program
+   71 |         填充数据到发�[01;31m[K�[m[K消息中
+      |                             [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:30:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\346[m[K’ in program
+   71 |         填充数据到发送[01;31m[K�[m[K��息中
+      |                              [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:31:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\266[m[K’ in program
+   71 |         填充数据到发送�[01;31m[K�[m[K�息中
+      |                               [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:32:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\210[m[K’ in program
+   71 |         填充数据到发送�[01;31m[K�[m[K息中
+      |                                [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:33:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\346[m[K’ in program
+   71 |         填充数据到发送消[01;31m[K�[m[K��中
+      |                                 [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:34:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\201[m[K’ in program
+   71 |         填充数据到发送消�[01;31m[K�[m[K�中
+      |                                  [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:35:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\257[m[K’ in program
+   71 |         填充数据到发送消�[01;31m[K�[m[K中
+      |                                   [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:36:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\344[m[K’ in program
+   71 |         填充数据到发送消息[01;31m[K�[m[K��
+      |                                    [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:37:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\270[m[K’ in program
+   71 |         填充数据到发送消息�[01;31m[K�[m[K�
+      |                                     [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:71:38:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[K\255[m[K’ in program
+   71 |         填充数据到发送消息�[01;31m[K�[m[K
+      |                                      [01;31m[K^[m[K
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:[m[K In function ‘[01m[Kint main(int, char**)[m[K’:
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/stm32_communication.cpp:60:5:[m[K [01;31m[Kerror: [m[K‘[01m[KpMotorDriver_rec[m[K’ was not declared in this scope; did you mean ‘[01m[KpMotorDriver[m[K’?
+   60 |     [01;31m[KpMotorDriver_rec[m[K = new UnitreeDriver("/dev/ttyUSB7");
+      |     [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |     [32m[KpMotorDriver[m[K
+make[2]: *** [CMakeFiles/STM32_Node.dir/build.make:63: CMakeFiles/STM32_Node.dir/src/stm32_communication.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:176: CMakeFiles/STM32_Node.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

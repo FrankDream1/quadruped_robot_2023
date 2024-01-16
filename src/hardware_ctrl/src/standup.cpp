@@ -10,7 +10,7 @@ MotorCmd cmd[12];       // 12个电机的控制命令
 MotorData data[12];     // 12个电机的返回数据
 double derta_pos[12] = {0};
 double kp[12];
-int time = 200;  // 站立所用时间，单位0.1s
+int stand_time = 200;  // 站立所用时间，单位0.1s
 double tt;
 
 void motorCallback(const unitree_legged_msgs::motordata::ConstPtr& motor_cmd);
@@ -20,14 +20,15 @@ int main(int argc, char** argv) {
   	ros::NodeHandle nh;
   	ros::Rate r(5);
 
-  	ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 100);
+  //ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 100);
+    ros::Publisher motorctrl = nh.advertise<unitree_legged_msgs::motorcmd>("/downstream", 100);
   	ros::Subscriber motorcmd = nh.subscribe<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 100, motorCallback);
 
     unitree_legged_msgs::motorcmd motcmd;
 
     ros::Rate loop_rate(SENDRATE);
 
-    YAML::Node joint = YAML::LoadFile("../config/standup.yaml");
+    YAML::Node joint = YAML::LoadFile("/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/config/standup.yaml");
     
     if (joint["motorcmd"]) {    // 验证yaml中是否有名为motorcmd的节点
         // 从yaml中读取关节电机数据
@@ -63,8 +64,8 @@ int main(int argc, char** argv) {
         //data[i-1].Pos=1;
         derta_pos[i-1]=motcmd.Pos[i-1]-data[i-1].Pos;
     }
-    for(int j = 1; j <= time; j++) {
-        tt = (double) j / time;
+    for(int j = 1; j <= stand_time; j++) {
+        tt = (double) j / stand_time;
         // 填充数据到发布的控制命令中
         for (int i = 1; i <= 12; i++) {
             motcmd.Pos[i-1] = data[i-1].Pos + tt * derta_pos[i-1];

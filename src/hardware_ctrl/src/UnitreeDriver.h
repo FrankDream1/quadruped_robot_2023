@@ -24,6 +24,17 @@ typedef struct{
     float CurTor = 0.0f;
 }UnitreeMotorData_t;    // 存储控制信息和反馈信息的结构体
 
+typedef struct{
+    uint8_t fe = 0x7e;
+    uint8_t id;
+    float TarTor = 0.0f;
+    float TarVel = 0.0f;
+    float TarPos = 0.0f;
+    float KP = 0.0f;
+    float KD = 0.0f;
+    uint8_t crc8;
+}UnitreeMotorData_t_sendToStm32;    // 存储控制信息和反馈信息的结构体
+
 class UnitreeDriver
 {
     public:
@@ -32,11 +43,13 @@ class UnitreeDriver
         void SendControlDataToSTM32(void);
         bool UpdateMotorData(void);
         void SetKPKD(uint8_t MotorID, float KP, float KD);
+        uint8_t prvCRCCalculate(uint8_t *pStr, uint8_t Len);
         UnitreeMotorData_t MotorData[12];            // 0 1 2对应左前；3 4 5对应左后；6 7 8对应右前；9 10 11对应右后
+        UnitreeMotorData_t_sendToStm32 data_to_stm32[12];
     private:
 
         serial::Serial prvSerial;
-        uint8_t prvCRCCalculate(uint8_t *pStr, uint8_t Len);
+        
         /* Tx */
         void EncodeAbleFrame(uint8_t *pData, uint8_t MotorID, bool Able);
         void EncodeParaFrame(uint8_t *pData, uint8_t MotorID, float KP, float KD);

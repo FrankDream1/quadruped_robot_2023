@@ -1,0 +1,10 @@
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/UnitreeDriver.cpp:[m[K In member function ‘[01m[Kvoid UnitreeDriver::SendControlDataToSTM32()[m[K’:
+[01m[K/home/mzx/Desktop/yuanshi/quadruped_robot_2023/src/hardware_ctrl/src/UnitreeDriver.cpp:94:12:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[Kdata_to_stm32[m[K’
+   94 |         c++
+      |            [01;31m[K^[m[K
+      |            [32m[K;[m[K
+   95 |         [32m[Kdata_to_stm32[m[K[i].id = (uint8_t)i << 4;
+      |         [32m[K~~~~~~~~~~~~~[m[K
+make[2]: *** [CMakeFiles/STM32_Node.dir/build.make:76: CMakeFiles/STM32_Node.dir/src/UnitreeDriver.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:176: CMakeFiles/STM32_Node.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2
