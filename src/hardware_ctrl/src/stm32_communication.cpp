@@ -41,7 +41,6 @@ void LowerTimercallback(const ros::TimerEvent&);
 // double initial_pose[12];//电机上电初始位置，接收的时候减去，下发的时候加上
 
 
-
 int main(int argc, char **argv) {
     ros::init(argc, argv, "STM32_Node");
     ros::NodeHandle nh;

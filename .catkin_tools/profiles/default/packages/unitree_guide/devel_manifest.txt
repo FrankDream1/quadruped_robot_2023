@@ -1,6 +1,0 @@
-unitree_guide
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_guide/cmake.lock /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_guide/lib/pkgconfig/unitree_guide.pc /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/unitree_guide.pc
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_guide/lib/unitree_guide/junior_ctrl /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/unitree_guide/junior_ctrl
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_guide/share/unitree_guide/cmake/unitree_guideConfig-version.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_guide/cmake/unitree_guideConfig-version.cmake
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_guide/share/unitree_guide/cmake/unitree_guideConfig.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_guide/cmake/unitree_guideConfig.cmake

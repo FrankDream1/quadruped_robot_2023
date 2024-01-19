@@ -1,5 +1,0 @@
-unitree_ros/robots/h1_description
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/h1_description/cmake.lock /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/h1_description/lib/pkgconfig/h1_description.pc /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/h1_description.pc
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/h1_description/share/h1_description/cmake/h1_descriptionConfig-version.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/h1_description/cmake/h1_descriptionConfig-version.cmake
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/h1_description/share/h1_description/cmake/h1_descriptionConfig.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/h1_description/cmake/h1_descriptionConfig.cmake

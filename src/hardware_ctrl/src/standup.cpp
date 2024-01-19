@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 
     ros::Rate loop_rate(SENDRATE);
 
-    YAML::Node joint = YAML::LoadFile("../config/standup.yaml");
+    YAML::Node joint = YAML::LoadFile("/home/guoyunkai/quadruped_robot_2023-src/quadruped_robot_2023-src/src/hardware_ctrl/config/standup.yaml");
     //YAML::Node joint = YAML::LoadFile("/home/mzx/Desktop/dog/src/hardware_ctrl/config/standup.yaml");
 
 

@@ -1,5 +1,0 @@
-unitree_ros/robots/laikago_description
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/laikago_description/cmake.lock /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/laikago_description/lib/pkgconfig/laikago_description.pc /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/laikago_description.pc
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/laikago_description/share/laikago_description/cmake/laikago_descriptionConfig.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/laikago_description/cmake/laikago_descriptionConfig.cmake
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/laikago_description/share/laikago_description/cmake/laikago_descriptionConfig-version.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/laikago_description/cmake/laikago_descriptionConfig-version.cmake

@@ -1,5 +1,0 @@
-unitree_ros/robots/go1_description
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/go1_description/cmake.lock /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/go1_description/lib/pkgconfig/go1_description.pc /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/go1_description.pc
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/go1_description/share/go1_description/cmake/go1_descriptionConfig-version.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/go1_description/cmake/go1_descriptionConfig-version.cmake
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/go1_description/share/go1_description/cmake/go1_descriptionConfig.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/go1_description/cmake/go1_descriptionConfig.cmake

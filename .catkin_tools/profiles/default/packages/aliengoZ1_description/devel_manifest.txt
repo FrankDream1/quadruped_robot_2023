@@ -1,5 +1,0 @@
-unitree_ros/robots/aliengoZ1_description
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/aliengoZ1_description/cmake.lock /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/./cmake.lock
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/aliengoZ1_description/lib/pkgconfig/aliengoZ1_description.pc /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/aliengoZ1_description.pc
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/aliengoZ1_description/share/aliengoZ1_description/cmake/aliengoZ1_descriptionConfig-version.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/aliengoZ1_description/cmake/aliengoZ1_descriptionConfig-version.cmake
-/home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/aliengoZ1_description/share/aliengoZ1_description/cmake/aliengoZ1_descriptionConfig.cmake /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/aliengoZ1_description/cmake/aliengoZ1_descriptionConfig.cmake

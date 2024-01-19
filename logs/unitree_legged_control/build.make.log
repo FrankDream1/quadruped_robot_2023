@@ -1,4 +1,0 @@
-[35m[1mScanning dependencies of target unitree_legged_control[0m
-[ 50%] [32mBuilding CXX object CMakeFiles/unitree_legged_control.dir/src/joint_controller.cpp.o[0m
-[100%] [32m[1mLinking CXX shared library /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/.private/unitree_legged_control/lib/libunitree_legged_control.so[0m
-[100%] Built target unitree_legged_control

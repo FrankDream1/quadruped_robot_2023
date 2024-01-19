@@ -1,7 +1,0 @@
-Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/libunitree_controller.so
-Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/unitree_controller/unitree_servo
-Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/unitree_controller/unitree_move_kinetic
-Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/unitree_controller/unitree_external_force
-Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/lib/pkgconfig/unitree_controller.pc
-Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_controller/cmake/unitree_controllerConfig.cmake
-Symlinking /home/mzx/Desktop/quad_ruped_ws/quadruped_robot_2023/devel/share/unitree_controller/cmake/unitree_controllerConfig-version.cmake
