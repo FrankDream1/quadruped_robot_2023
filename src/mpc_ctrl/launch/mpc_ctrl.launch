@@ -1,5 +1,3 @@
 <launch>
-    <rosparam file="$(find mpc_ctrl)/config/param.yaml" command="load"/>
-
     <node pkg="mpc_ctrl" type="mpc_ctrl" name="mpc_ctrl" output="screen"/>
 </launch>

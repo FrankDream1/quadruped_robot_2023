@@ -11,9 +11,12 @@
 MotorCmd cmd[12];       // 12个电机的控制命令
 MotorData data[12];     // 12个电机的返回数据
 double derta_pos[12] = {0};
+double derta_tau[12] = {0};
+double cur_tau[12]={0};
 double kp[12];
-int stand_time = 200;  // 站立所用时间，单位0.1s
+int stand_time = 100;  // 站立所用时间，单位0.1s
 double tt;
+double rr;
 
 void motorCallback(const unitree_legged_msgs::upstream::ConstPtr& motor_cmd);
 
@@ -34,8 +37,13 @@ int main(int argc, char** argv) {
 
     ros::Rate loop_rate(SENDRATE);
 
+<<<<<<< Updated upstream
     // YAML::Node joint = YAML::LoadFile("/home/guoyunkai/quadruped_robot_2023/src/hardware_ctrl/config/standup.yaml");
     YAML::Node joint = YAML::LoadFile("/home/mzx/Desktop/dog/src/hardware_ctrl/config/standup.yaml");
+=======
+    YAML::Node joint = YAML::LoadFile("/home/guoyunkai/quadruped_robot_2023-src/quadruped_robot_2023-src/src/hardware_ctrl/config/standup.yaml");
+    //YAML::Node joint = YAML::LoadFile("/home/mzx/Desktop/dog/src/hardware_ctrl/config/standup.yaml");
+>>>>>>> Stashed changes
 
 
     if (joint["motorcmd"]) {    // 验证yaml中是否有名为motorcmd的节点
@@ -71,12 +79,14 @@ int main(int argc, char** argv) {
     for (int i = 1; i <= 12; i++) {
         //data[i-1].Pos=1;
         derta_pos[i-1]=motcmd.Pos[i-1]-data[i-1].Pos;
+        derta_tau[i-1]=motcmd.T[i-1]-cur_tau[i-1];
     }
     for(int j = 1; j <= stand_time; j++) {
         tt = (double) j / stand_time;
         // 填充数据到发布的控制命令中
         for (int i = 1; i <= 12; i++) {
             motcmd.Pos[i-1] = data[i-1].Pos + tt * derta_pos[i-1];
+            motcmd.T[i-1] = cur_tau[i-1] + tt * derta_tau[i-1];
             // motcmd.Pos[i-1] = data[i-1].Pos + tt * derta_pos[i-1];
             motcmd.K_P[i-1] = kp[i-1];
             // 下发控制信息并接收电机回传数据                                                                                                                                                                              
@@ -98,13 +108,7 @@ int main(int argc, char** argv) {
 void motorCallback(const unitree_legged_msgs::upstream::ConstPtr& motor_cmd){
     //接收到控制数据后将其填入下发结构体中
     for (int j = 1; j <= 12; j++) {
-    //  cmd[j-1].motorType = MotorType::Go2;
-    //  cmd[j-1].id    = motor_cmd->id[j-1];
-    //  cmd[j-1].mode  = motor_cmd->mode[j-1];
-    //  cmd[j-1].K_P   = motor_cmd->K_P[j-1];
-    //  cmd[j-1].K_W   = motor_cmd->K_W[j-1];
     data[j-1].Pos = motor_cmd->Pos[j-1];
-    //  cmd[j-1].W     = motor_cmd->W[j-1];
-    //  cmd[j-1].T     = motor_cmd->T[j-1];
+    cur_tau[j-1] = motor_cmd->T[j-1];
     }
 }

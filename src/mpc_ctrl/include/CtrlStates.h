@@ -299,12 +299,15 @@ public:
 	}
 
     void gait_counter_reset() {
+		// 对角步态
 		if (gait_type == 1) {
 			gait_counter << 0, 120, 120, 0;
 		}
+		// 其他步态
+		// to be continued
     }
 
-    int movement_mode;	// 0代表站立, 1代表开始移动
+    int movement_mode;	// 0代表站立，1代表开始移动
     double control_dt = MAIN_UPDATE_FREQUENCY / 1000.0;
 
     double counter_per_gait; // 步态周期平均计数次数
@@ -367,8 +370,8 @@ public:
     Eigen::Matrix<double, 3, NUM_LEG> foot_vel_rel;	// 足端速度（机体坐标系）
     Eigen::Matrix<double, 12, 12> j_foot;	// 每条腿的雅可比矩阵合并矩阵
 
-    bool contacts[NUM_LEG];	// 用来决定腿部运动模式的flag
-    bool plan_contacts[NUM_LEG];	// 用来决定腿部期望运动模式的flag
+    bool contacts[NUM_LEG];	// 用来决定腿部运动模式的flag，1代表接触地面，0代表不接触地面
+    bool plan_contacts[NUM_LEG];	// 用来决定腿部期望运动模式的flag，1代表接触地面，0代表不接触地面
     bool early_contacts[NUM_LEG];   // 摆动过程中碰撞则设为真
 
     Eigen::Matrix<double, NUM_DOF_PER_LEG, NUM_LEG> kp_foot;

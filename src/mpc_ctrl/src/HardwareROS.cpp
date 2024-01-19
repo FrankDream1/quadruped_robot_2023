@@ -4,8 +4,8 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     nh = _nh;
 
     // 和电机通讯的ROS话题
-    motor_cmd = nh.advertise<unitree_legged_msgs::motorcmd>("/dog_hardware/motorcmd", 100);
-    motor_data = nh.subscribe<unitree_legged_msgs::motordata>("/dog_hardware/motordata", 1000, &HardwareROS::receive_motor_state, this);
+    motor_cmd = nh.advertise<unitree_legged_msgs::downstream>("/dog_hardware/downstream", 100);
+    motor_data = nh.subscribe<unitree_legged_msgs::upstream>("/dog_hardware/upstream", 1000, &HardwareROS::receive_motor_state, this);
 
     // 接受IMU数据的ROS话题
     imu_data = nh.subscribe<sensor_msgs::Imu>("/dog_hardware/imu", 1000, &HardwareROS::receive_imu_state, this);
@@ -195,7 +195,7 @@ bool HardwareROS::send_cmd() {
     // 计算关节力矩
     _root_control.compute_joint_torques(dog_ctrl_states);
 
-    unitree_legged_msgs::motorcmd motordown;
+    unitree_legged_msgs::downstream motordown;
 
     // 下发控制命令
     // 注意dog_ctrl_states.joint_torques中腿的顺序为FL, FR, RL, RR, 下位机中腿的顺序为FL, RL, FR, RR
@@ -214,12 +214,12 @@ bool HardwareROS::send_cmd() {
     return true;
 }
 
-void HardwareROS::receive_motor_state(const unitree_legged_msgs::motordata::ConstPtr &motorup) {
+void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::ConstPtr &motorup) {
     ros::Time prev = ros::Time::now();
     ros::Time now = ros::Time::now();
     ros::Duration dt(0);
     
-    while (destruct == false) {
+    while (true) {
         // 向dog_ctrl_states中填充数据, 注意state中的顺序是FL, RL, FR, RR, dog_ctrl_states中顺序为FL, FR, RL, RR
         // 获取当前时间(s)
         now = ros::Time::now();
@@ -237,11 +237,6 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::motordata::Cons
         // 估计足端力
         // to be continued
 
-
-
-
-
-
         // 发布关节状态
         for (int i = 0; i < NUM_DOF; ++i) {
             joint_foot_msg.position[i] = dog_ctrl_states.joint_pos[i];
@@ -250,7 +245,7 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::motordata::Cons
         for (int i = 0; i < NUM_LEG; ++i) {
             // 规划的接触状态当作足端速度
             joint_foot_msg.velocity[NUM_DOF + i] = dog_ctrl_states.plan_contacts[i];
-            joint_foot_msg.effort[NUM_DOF + i] = dog_ctrl_states.foot_force[i];
+            //joint_foot_msg.effort[NUM_DOF + i] = dog_ctrl_states.foot_force[i];
         }
         joint_foot_msg.header.stamp = ros::Time::now();
         pub_joint_angle.publish(joint_foot_msg);

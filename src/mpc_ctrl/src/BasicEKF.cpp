@@ -4,14 +4,14 @@ BasicEKF::BasicEKF() {
     eye3.setIdentity();
     
     // H表示状态空间变量到观测空间变量的映射
-    // H <<  -I3    0     I3    0     0     0 
-    //       -I3    0     0     I3    0     0
-    //       -I3    0     0     0     I3    0
-    //       -I3    0     0     0     0     I3
-    //        0     I3    0     0     0     0
-    //        0     I3    0     0     0     0
-    //        0     I3    0     0     0     0
-    //        0     I3    0     0     0     0
+    // H <<  -I3   0*3    I3   0*3   0*3   0*3 
+    //       -I3   0*3   0*3    I3   0*3   0*3
+    //       -I3   0*3   0*3   0*3    I3   0*3
+    //       -I3   0*3   0*3   0*3   0*3    I3
+    //       0*3    I3   0*3   0*3   0*3   0*3
+    //       0*3    I3   0*3   0*3   0*3   0*3
+    //       0*3    I3   0*3   0*3   0*3   0*3
+    //       0*3    I3   0*3   0*3   0*3   0*3
     //      0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0
     //      0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0
     //      0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
@@ -24,12 +24,12 @@ BasicEKF::BasicEKF() {
         H(NUM_LEG * 6 + i, 6 + i * 3 + 2) = 1;  // 足端高度
     }
 
-    // Q << I3*noise(ep)      0            0             0             0             0
-    //           0       I3*noise(ev)      0             0             0             0
-    //           0            0       I3*noise(ep1)      0             0             0
-    //           0            0            0        I3*noise(ep2)      0             0
-    //           0            0            0             0        I3*noise(ep3)      0
-    //           0            0            0             0             0        I3*noise(ep4)
+    // Q << I3*noise(ep)     0*3          0*3           0*3           0*3           0*3
+    //          0*3      I3*noise(ev)     0*3           0*3           0*3           0*3
+    //          0*3          0*3      I3*noise(ep1)     0*3           0*3           0*3
+    //          0*3          0*3          0*3       I3*noise(ep2)     0*3           0*3
+    //          0*3          0*3          0*3           0*3       I3*noise(ep3)     0*3
+    //          0*3          0*3          0*3           0*3           0*3       I3*noise(ep4)
     Q.setIdentity();
     Q.block<3,3>(0,0) = PROCESS_NOISE_PIMU * eye3;  // 位置转移噪声
     Q.block<3,3>(3,3) = PROCESS_NOISE_VIMU * eye3;  // 速度转移噪声
@@ -37,13 +37,13 @@ BasicEKF::BasicEKF() {
         Q.block<3,3>(6 + i * 3, 6 + i * 3) = PROCESS_NOISE_PFOOT * eye3;  // 足端位置转移噪声
     }
 
-    // R << I12*noise(epfoot)        0               0
-    //             0          I12*noise(evfoot)      0
-    //             0                 0          I4*noise(z)
+    // R << I12*noise(epfoot)      0*12           0(4*12)
+    //           0*12         I12*noise(evfoot)   0(4*12)
+    //          0(12*4)           0(12*4)       I4*noise(z)
     R.setIdentity();
     for (int i = 0; i < NUM_LEG; ++i) {
-        R.block<3,3>(i * 3, i * 3) = SENSOR_NOISE_PIMU_REL_FOOT * eye3;  // IMU位置噪声
-        R.block<3,3>(NUM_LEG * 3 + i * 3, NUM_LEG * 3 + i * 3) = SENSOR_NOISE_VIMU_REL_FOOT * eye3;  // IMU速度噪声
+        R.block<3,3>(i * 3, i * 3) = SENSOR_NOISE_PIMU_REL_FOOT * eye3;  // 传感器位置观测噪声
+        R.block<3,3>(NUM_LEG * 3 + i * 3, NUM_LEG * 3 + i * 3) = SENSOR_NOISE_VIMU_REL_FOOT * eye3;  // 传感器速度观测噪声
         R(NUM_LEG * 6 + i, NUM_LEG * 6 + i) = SENSOR_NOISE_ZFOOT;  // 足端高度噪声
     }
 
@@ -86,20 +86,20 @@ void BasicEKF::init_state(CtrlStates& state) {
 
 void BasicEKF::update_estimation(CtrlStates& state, double dt) {
     // 更新状态转移矩阵和控制输入矩阵
-    // F << I3 I3*dt 0  0  0  0
-    //      0   I3   0  0  0  0
-    //      0   0    I3 0  0  0 
-    //      0   0    0  I3 0  0 
-    //      0   0    0  0  I3 0 
-    //      0   0    0  0  0  I3
+    // F << I3  I3*dt 0*3 0*3 0*3 0*3
+    //      0*3  I3   0*3 0*3 0*3 0*3
+    //      0*3  0*3  I3  0*3 0*3 0*3 
+    //      0*3  0*3  0*3 I3  0*3 0*3 
+    //      0*3  0*3  0*3 0*3 I3  0*3 
+    //      0*3  0*3  0*3 0*3 0*3 I3
     F.block<3, 3>(0, 3) = dt * eye3;
 
-    // B <<   0
+    // B <<  0*3
     //      I3*dt
-    //        0 
-    //        0
-    //        0
-    //        0
+    //       0*3 
+    //       0*3
+    //       0*3
+    //       0*3
     B.block<3, 3>(3, 0) = dt * eye3;
 
     // 加速度作为输入变量，为世界坐标系中质心加速度和重力加速度之和
@@ -110,29 +110,20 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
         // 站立状态，四条腿都是触地的
         for (int i = 0; i < NUM_LEG; ++i) 
             estimated_contacts[i] = 1.0;
-    } else {  
-        // 行走状态，采用接触状态检测算法
+    } else {
+        // 行走状态，先采用规划接触状态
         for (int i = 0; i < NUM_LEG; ++i) {
-            // to be continued
-
-
-
-
-
-
-
-
-
+            estimated_contacts[i] = state.plan_contacts[i];
         }
     }
 
     // 根据u和dt更新Q
-    // Q << I3*dt*noise(ep)/20           0                0              0             0             0
-    //             0          9.8*I3*dt*noise(ev)/20      0              0             0             0
-    //             0                     0           I3*noise(ep1)       0             0             0
-    //             0                     0                0         I3*noise(ep2)      0             0
-    //             0                     0                0              0        I3*noise(ep3)      0
-    //             0                     0                0              0             0        I3*noise(ep4)
+    // Q << I3*dt*noise(ep)/20          0*3                0*3           0*3          0*3             0*3
+    //            0*3          9.8*I3*dt*noise(ev)/20      0*3           0*3          0*3             0*3
+    //            0*3                   0*3           I3*noise(ep1)      0*3          0*3             0*3
+    //            0*3                   0*3                0*3      I3*noise(ep2)     0*3             0*3
+    //            0*3                   0*3                0*3           0*3      I3*noise(ep3)      0*3
+    //            0*3                   0*3                0*3           0*3          0*3        I3*noise(ep4)
     Q.block<3, 3>(0, 0) = PROCESS_NOISE_PIMU * dt / 20.0 * eye3;
     Q.block<3, 3>(3, 3) = PROCESS_NOISE_VIMU * dt * 9.8 / 20.0 * eye3;
 
@@ -189,7 +180,7 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
 
     // 最终将估计值返回CtrlStates& state
     for (int i = 0; i < NUM_LEG; ++i) {
-        // 当足端力大于等于50N时认为足端触地
+        // 设置估计接触状态
         if (estimated_contacts[i] < 0.5) {
             state.estimated_contacts[i] = false;
         } else {

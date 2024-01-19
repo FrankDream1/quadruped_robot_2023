@@ -25,8 +25,10 @@ using namespace std;
 // 逻辑零点实际位置数组：下发命令的时候，加上本数组；接收的时候，减掉本数组
 #define LOGIZZEROPOSARRAY   {0.f, -0.f, 0.f, 0.f, 0.f, 0.f, 0.f,0.f, 0.f, 0.f, 0.f, 0.f}
 // 正反 + 减速比数组：下发命令时乘本数组，接收的时候除以本数组
-#define MOTORDIRARRAY       {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}                  
-
+#define MOTORDIRARRAY       {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+            
+//坐标系变换
+const double transformation[12]={0, 0, 0, 0.818, -0.863, 3.033, 0.761, 0.842, -3.001, -0.769, 0.859, -3.106};
 static UnitreeDriver *pMotorDriver = nullptr;     //
 static UnitreeDriver *pMotorDriver_rec = nullptr;     //
 static const float LogicZeroPosArray[12] = LOGIZZEROPOSARRAY; // 逻辑零位实际位置数组
@@ -36,6 +38,8 @@ void Map_PublishMotorData(ros::Publisher& Pub);
 void NodeUserInit();
 void UpdateSwingLegMotor0KD(void);
 void LowerTimercallback(const ros::TimerEvent&);
+// double initial_pose[12];//电机上电初始位置，接收的时候减去，下发的时候加上
+
 
 
 int main(int argc, char **argv) {
@@ -56,30 +60,45 @@ int main(int argc, char **argv) {
     // //build multiple thread
     // PubThread (pMotorDriver->SendControlDataToSTM32());
     // PubThread.join();
-
+    //储存电机上电位置
+    // pMotorDriver_rec->UpdateMotorData();
+    // for(int i=0;i<12;i++)
+    // {
+    //     initial_pose[i]=pMotorDriver_rec->MotorData[i].CurPos;
+    // }
     while (ros::ok()) {
         // 更新电机状态
         pMotorDriver_rec->UpdateMotorData();
+        //减去初始位置得到差值
+        // for(int i=0;i<12;i++)
+        // {
+        //     pMotorDriver_rec->MotorData[i].CurPos=pMotorDriver_rec->MotorData[i].CurPos-initial_pose[i];
+        // }
+        //变换坐标系
+        for(int i=0;i<12;i++)
+        {
+            pMotorDriver_rec->MotorData[i].CurPos=pMotorDriver_rec->MotorData[i].CurPos-transformation[i];
+        }
         // 填充数据到发送消息中
         Map_PublishMotorData(UpStreamPub);                      // 发布电机当前数据
 
         // 显示下位机上发的数据
-        std::cout << "MotorData_Pos:";
-        for (int i = 0; i < 12; i++) {
-            std::cout << pMotorDriver_rec->MotorData[i].CurPos << " ";
-        }
-        std::cout << std::endl;
-        std::cout << "MotorData_Vel:";
-        for (int i = 0; i < 12; i++) {
-            std::cout << pMotorDriver_rec->MotorData[i].CurVel << " ";
-        }
-        std::cout << std::endl;
-        std::cout << "MotorData_Tor:";
-        for (int i = 0; i < 12; i++) {
-            std::cout << pMotorDriver_rec->MotorData[i].CurTor << " ";
-        }
-        std::cout << std::endl;
-        std::cout << std::endl;
+        // std::cout << "MotorData_Pos:";
+        // for (int i = 0; i < 12; i++) {
+        //     std::cout << pMotorDriver_rec->MotorData[i].CurPos << " ";
+        // }
+        // std::cout << std::endl;
+        // std::cout << "MotorData_Vel:";
+        // for (int i = 0; i < 12; i++) {
+        //     std::cout << pMotorDriver_rec->MotorData[i].CurVel << " ";
+        // }
+        // std::cout << std::endl;
+        // std::cout << "MotorData_Tor:";
+        // for (int i = 0; i < 12; i++) {
+        //     std::cout << pMotorDriver_rec->MotorData[i].CurTor << " ";
+        // }
+        // std::cout << std::endl;
+        // std::cout << std::endl;
         
         ros::spinOnce(); // 刷新控制数据(调用本函数之后，会直接调用CallBack函数，所以应该是不用担心数据还没来得及刷新的问题的)
 
@@ -151,11 +170,18 @@ void DownStreamCallback(const unitree_legged_msgs::downstream::ConstPtr& DownStr
         //DownStreamMsg->id[MotorCount];
         pMotorData->TarTor=DownStreamMsg->T[MotorCount];
         pMotorData->TarVel=DownStreamMsg->W[MotorCount];
+<<<<<<< Updated upstream
         pMotorData->TarPos=DownStreamMsg->Pos[MotorCount];
         pMotorData->KP = DownStreamMsg->K_P[MotorCount];
         pMotorData->KD = DownStreamMsg->K_W[MotorCount];
         // pMotorData->KP=DownStreamMsg.K_P[MotorCount];
         // pMotorData->KD=DownStreamMsg.K_W[MotorCount];
+=======
+        //pMotorData->TarPos=DownStreamMsg->Pos[MotorCount]+transformation[id]+initial_pose[id];//变换坐标系并加上初始值
+        pMotorData->TarPos=DownStreamMsg->Pos[MotorCount]+transformation[id];//变换坐标系并加上初始值
+        pMotorData->KP = DownStreamMsg->K_P[MotorCount];
+        pMotorData->KD = DownStreamMsg->K_W[MotorCount];
+>>>>>>> Stashed changes
     }
 }
 

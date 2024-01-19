@@ -61,14 +61,14 @@ RobotControl::RobotControl(ros::NodeHandle &_nh) : RobotControl() {
 }
 
 void RobotControl::update_plan(CtrlStates &state, double dt) {
-    state.counter += 1;
+    // 更新步态
     if (!state.movement_mode) {
         // 当movement_mode == 0时站立，代表所有腿都接触地面，重设步态计数器
         for (bool &plan_contact: state.plan_contacts) 
             plan_contact = true;
         state.gait_counter_reset();
     } else {
-        // 当movement_mode == 1时行走
+        // 当movement_mode == 1时行走，使用对角步态
         for (int i = 0; i < NUM_LEG; ++i) {
             state.gait_counter(i) = state.gait_counter(i) + state.gait_counter_speed(i);
             state.gait_counter(i) = std::fmod(state.gait_counter(i), state.counter_per_gait);
@@ -83,7 +83,6 @@ void RobotControl::update_plan(CtrlStates &state, double dt) {
     // 更新足端规划: state.foot_pos_target_world
     Eigen::Vector3d lin_vel_world = state.root_lin_vel; // 世界坐标系中的线速度
     Eigen::Vector3d lin_vel_rel = state.root_rot_mat_z.transpose() * lin_vel_world; // 机体坐标系中的线速度
-
     // 计算落足点位置，使用Raibert Heuristic算法
     state.foot_pos_target_rel = state.default_foot_pos;
     for (int i = 0; i < NUM_LEG; ++i) {
@@ -170,7 +169,6 @@ void RobotControl::generate_swing_legs_ctrl(CtrlStates &state, double dt) {
 
         // 计算落足点位置误差
         foot_pos_error.block<3, 1>(0, i) = foot_pos_target.block<3, 1>(0, i) - foot_pos_cur.block<3, 1>(0, i);
-        
         // 计算落足点速度误差
         foot_vel_error.block<3, 1>(0, i) = foot_vel_target.block<3, 1>(0, i) - foot_vel_cur.block<3, 1>(0, i);
         
@@ -181,19 +179,20 @@ void RobotControl::generate_swing_legs_ctrl(CtrlStates &state, double dt) {
     state.foot_pos_cur = foot_pos_cur;
 
     // 检测是否有提前接触
-    bool last_contacts[NUM_LEG];
+    //bool last_contacts[NUM_LEG];
 
     for (int i = 0; i < NUM_LEG; ++i) {
-        if (state.gait_counter(i) <= state.counter_per_swing * 1.5) {
+        /* if (state.gait_counter(i) <= state.counter_per_swing * 1.5) {
             state.early_contacts[i] = false;
         }
         if (!state.plan_contacts[i] && (state.gait_counter(i) > state.counter_per_swing * 1.5) && (state.foot_force(i) > FOOT_FORCE_LOW)) {
             state.early_contacts[i] = true;
-        }
+        } */
 
         // 更新真实接触状态
-        last_contacts[i] = state.contacts[i];
-        state.contacts[i] = state.plan_contacts[i] || state.early_contacts[i];
+        //last_contacts[i] = state.contacts[i];
+        //state.contacts[i] = state.plan_contacts[i] || state.early_contacts[i];
+        state.contacts[i] = state.plan_contacts[i];
 
         // 如果接触地面，记录最近的落足点位置
         if (state.contacts[i]) {
@@ -282,9 +281,9 @@ Eigen::Matrix<double, 3, NUM_LEG> RobotControl::compute_grf(CtrlStates &state, d
 
     // 当前后腿足端高度差大于某一个值时，俯仰角设为地形角
     if (F_R_diff > 0.05) {
-    state.root_euler_d[1] = -terrain_angle;
+        state.root_euler_d[1] = -terrain_angle;
     } else {
-    state.root_euler_d[1] = terrain_angle;
+        state.root_euler_d[1] = terrain_angle;
     }
 
     std_msgs::Float64 terrain_angle_msg;

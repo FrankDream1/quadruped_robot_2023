@@ -23,8 +23,8 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/Vector3Stamped.h>
-#include <unitree_legged_msgs/motorcmd.h>
-#include <unitree_legged_msgs/motordata.h>
+#include <unitree_legged_msgs/downstream.h>
+#include <unitree_legged_msgs/upstream.h>
 
 // control parameters
 #include "Param.h"
@@ -52,7 +52,7 @@ public:
     void joy_callback(const sensor_msgs::Joy::ConstPtr &joy_msg);
 
     // 接受下位机返回数据
-    void receive_motor_state(const unitree_legged_msgs::motordata::ConstPtr &motorup);
+    void receive_motor_state(const unitree_legged_msgs::upstream::ConstPtr &motorup);
 
     // 接受IMU返回数据
     void receive_imu_state(const sensor_msgs::Imu::ConstPtr &imudata);
@@ -72,10 +72,7 @@ private:
     ros::Publisher pub_joint_cmd;           // 关节力矩命令发布者
     ros::Publisher pub_joint_angle;         // 关节角度发布者
     ros::Publisher pub_estimated_pose;      // 估计状态发布者
-    sensor_msgs::JointState joint_foot_msg; // 关节及足端信息
-
-    std::thread thread_;    // 硬件读取指针
-    bool destruct = false;    
+    sensor_msgs::JointState joint_foot_msg; // 关节及足端信息  
 
     Eigen::Matrix<int, NUM_DOF, 1> swap_joint_indices;  // 腿的顺序变换矩阵
     Eigen::Matrix<int, NUM_LEG, 1> swap_foot_indices;   // 足端的顺序变换矩阵
@@ -100,37 +97,28 @@ private:
     int prev_joy_cmd_ctrl_state = 0;
     bool joy_cmd_exit = false;
 
-    // 机体坐标系(r)到世界坐标系(b)平移向量
-    Eigen::Vector3d p_br;
-    // 机体坐标系(r)到世界坐标系(b)旋转矩阵
-    Eigen::Matrix3d R_br;
+    Eigen::Vector3d p_br;   // 机体坐标系(r)到世界坐标系(b)平移向量
+    Eigen::Matrix3d R_br;   // 机体坐标系(r)到世界坐标系(b)旋转矩阵
 
-    // 腿部偏置：hip关节相对于质心
-    double leg_offset_x[4] = {};
-    double leg_offset_y[4] = {};
-    // 电机偏置
-    double motor_offset[4] = {};
-    // 大腿和小腿长度列表
-    double upper_leg_length[4] = {};
-    double lower_leg_length[4] = {};
-    // 运动学常数列表
-    std::vector<Eigen::VectorXd> rho_fix_list;
-    std::vector<Eigen::VectorXd> rho_opt_list;
+    double leg_offset_x[4] = {};    // 腿部偏置：hip关节相对于质心
+    double leg_offset_y[4] = {};    // 腿部偏置：hip关节相对于质心
+    double motor_offset[4] = {};    // 电机偏置
+    double upper_leg_length[4] = {};    // 大腿长度列表 
+    double lower_leg_length[4] = {};    // 小腿长度列表
+
+    std::vector<Eigen::VectorXd> rho_fix_list;  // 机体偏置x和y, thigh关节偏置, 大腿长度, 小腿长度
+    std::vector<Eigen::VectorXd> rho_opt_list;  // 接触的偏置cx, cy, cz
 
     double PosStopF = 2.146E+9f;    // 禁止速度环
-    double VelStopF = 16000.0f; // 禁止位置环
+    double VelStopF = 16000.0f;     // 禁止位置环
+   
+    Kinematics dog_kin; // 运动学变量
+    
+    CtrlStates dog_ctrl_states; // 控制状态变量，包含机器狗运动的状态
+   
+    RobotControl _root_control; // 控制过程变量，包含运动过程所需的函数
 
-    // 运动学变量
-    Kinematics dog_kin;
-
-    // 控制状态变量，包含机器狗运动的状态
-    CtrlStates dog_ctrl_states;
-
-    // 控制过程变量，包含运动过程所需的函数
-    RobotControl _root_control;
-
-    // 状态估计变量
-    BasicEKF dog_estimate;
+    BasicEKF dog_estimate;  // 状态估计变量
 };
 
 #endif //HARDWAREROS_H
