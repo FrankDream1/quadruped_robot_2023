@@ -1,5 +1,5 @@
 // 数据帧格式：以0X7E开头 + 0x01 + 角度(float*3）+角速速(float* 3)+ 加速度(float * 3) + 四元数(float*4) + CRC8 (500Hz)
-
+//
 #include <iostream>
 #include <vector>
 #include <cstdint>
