@@ -37,13 +37,8 @@ int main(int argc, char** argv) {
 
     ros::Rate loop_rate(SENDRATE);
 
-<<<<<<< Updated upstream
-    // YAML::Node joint = YAML::LoadFile("/home/guoyunkai/quadruped_robot_2023/src/hardware_ctrl/config/standup.yaml");
-    YAML::Node joint = YAML::LoadFile("/home/mzx/Desktop/dog/src/hardware_ctrl/config/standup.yaml");
-=======
-    YAML::Node joint = YAML::LoadFile("/home/guoyunkai/quadruped_robot_2023-src/quadruped_robot_2023-src/src/hardware_ctrl/config/standup.yaml");
+    YAML::Node joint = YAML::LoadFile("../config/standup.yaml");
     //YAML::Node joint = YAML::LoadFile("/home/mzx/Desktop/dog/src/hardware_ctrl/config/standup.yaml");
->>>>>>> Stashed changes
 
 
     if (joint["motorcmd"]) {    // 验证yaml中是否有名为motorcmd的节点

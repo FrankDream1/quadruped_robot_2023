@@ -170,18 +170,10 @@ void DownStreamCallback(const unitree_legged_msgs::downstream::ConstPtr& DownStr
         //DownStreamMsg->id[MotorCount];
         pMotorData->TarTor=DownStreamMsg->T[MotorCount];
         pMotorData->TarVel=DownStreamMsg->W[MotorCount];
-<<<<<<< Updated upstream
-        pMotorData->TarPos=DownStreamMsg->Pos[MotorCount];
-        pMotorData->KP = DownStreamMsg->K_P[MotorCount];
-        pMotorData->KD = DownStreamMsg->K_W[MotorCount];
-        // pMotorData->KP=DownStreamMsg.K_P[MotorCount];
-        // pMotorData->KD=DownStreamMsg.K_W[MotorCount];
-=======
         //pMotorData->TarPos=DownStreamMsg->Pos[MotorCount]+transformation[id]+initial_pose[id];//变换坐标系并加上初始值
         pMotorData->TarPos=DownStreamMsg->Pos[MotorCount]+transformation[id];//变换坐标系并加上初始值
         pMotorData->KP = DownStreamMsg->K_P[MotorCount];
         pMotorData->KD = DownStreamMsg->K_W[MotorCount];
->>>>>>> Stashed changes
     }
 }
 
