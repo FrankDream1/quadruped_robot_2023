@@ -1,1 +1,1 @@
-# you can start the program by run "./run_sim.sh"
+TO BE CONTINUED
