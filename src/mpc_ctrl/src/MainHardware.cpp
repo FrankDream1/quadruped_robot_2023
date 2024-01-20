@@ -15,7 +15,6 @@
 int main(int argc, char **argv) {
     ros::init(argc, argv, "hardware_dog_mpc_ctrl");
     ros::NodeHandle nh;
-
     // 改变ros日志显示输出的级别设置
     if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug)) {
         ros::console::notifyLoggerLevelsChanged();
@@ -36,7 +35,6 @@ int main(int argc, char **argv) {
     // 创建控制执行过程中的原子变量防止两个线程冲突
     std::atomic<bool> control_execute{};
     control_execute.store(true, std::memory_order_release);
-
     // 线程1: 计算期望地面作用力
     std::cout << "Enter thread 1: compute desired ground forces" << std::endl;
     std::thread compute_foot_forces_grf_thread([&]() {
@@ -55,7 +53,7 @@ int main(int argc, char **argv) {
 
             // 计算期望地面作用力
             bool running = dog->update_foot_forces_grf(dt.toSec());
-
+            // ros::spinOnce();
             // 计算时间
             dt_solver_time = ros::Time::now() - now;
             
@@ -107,7 +105,6 @@ int main(int argc, char **argv) {
             }
         }
     });
-
     ros::AsyncSpinner spinner(12);
     spinner.start();
 
