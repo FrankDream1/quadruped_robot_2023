@@ -3,7 +3,7 @@
 
 #define GRF_UPDATE_FREQUENCY 2.5        // MPC控制器更新频率(ms)
 #define MAIN_UPDATE_FREQUENCY 2.5       // 主控制器更新频率(ms)
-#define HARDWARE_FEEDBACK_FREQUENCY 2.0 // 硬件反馈频率(ms)
+#define HARDWARE_FEEDBACK_FREQUENCY 1.0 // 硬件反馈频率(ms)
 
 // 控制手柄参数
 #define JOY_CMD_BODY_HEIGHT_MAX 0.32    // 站立最大高度(m)

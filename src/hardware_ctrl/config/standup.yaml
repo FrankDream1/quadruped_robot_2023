@@ -5,7 +5,7 @@ motorcmd:
     id: 0
     mode: 1
     K_P: 180
-    K_W: 10
+    K_W: 50
     Pos: 0
     W: 0.0
     T: 0.0
@@ -15,7 +15,7 @@ motorcmd:
     id: 1
     mode: 1
     K_P: 180
-    K_W: 10    
+    K_W: 50    
     Pos: 0
     W: 0.0
     T: 0.0
@@ -25,7 +25,7 @@ motorcmd:
     id: 2
     mode: 1
     K_P: 180
-    K_W: 10
+    K_W: 50
     Pos: 0
     W: 0.0
     T: 0.0
@@ -35,7 +35,7 @@ motorcmd:
     id: 3
     mode: 1
     K_P: 180
-    K_W: 10
+    K_W: 50
     Pos: 0.006 
     W: 0.0
     T: 0.0
@@ -45,7 +45,7 @@ motorcmd:
     id: 4
     mode: 1
     K_P: 180
-    K_W: 10
+    K_W: 50
     Pos: 0.567
     W: 0.0
     T: 0.0
@@ -55,7 +55,7 @@ motorcmd:
     id: 5
     mode: 1
     K_P: 180
-    K_W: 10
+    K_W: 50
     Pos: -1.672
     W: 0.0
     T: 0.0
@@ -65,7 +65,7 @@ motorcmd:
     id: 6
     mode: 1
     K_P: 180
-    K_W: 10
+    K_W: 50
     Pos: 0.0758
     W: 0.0
     T: 0.0
@@ -75,7 +75,7 @@ motorcmd:
     id: 7
     mode: 1
     K_P: 180
-    K_W: 10
+    K_W: 50
     Pos: -0.517
     W: 0.0
     T: 0.0
@@ -85,7 +85,7 @@ motorcmd:
     id: 8
     mode: 1
     K_P: 180
-    K_W: 10
+    K_W: 50
     Pos: 1.559
     W: 0.0
     T: 0.0
@@ -95,7 +95,7 @@ motorcmd:
     id: 9
     mode: 1
     K_P: 180
-    K_W: 10
+    K_W: 50
     Pos: 0.021
     W: 0.0
     T: 0.0
@@ -105,7 +105,7 @@ motorcmd:
     id: 10
     mode: 1
     K_P: 180
-    K_W: 10
+    K_W: 50
     Pos: -0.700
     W: 0.0
     T: 0.0
@@ -115,7 +115,7 @@ motorcmd:
     id: 11
     mode: 1
     K_P: 180
-    K_W: 10
+    K_W: 50
     Pos: 1.564
     W: 0.0
     T: 0.0

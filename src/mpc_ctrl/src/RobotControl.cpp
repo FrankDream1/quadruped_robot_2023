@@ -179,20 +179,19 @@ void RobotControl::generate_swing_legs_ctrl(CtrlStates &state, double dt) {
     state.foot_pos_cur = foot_pos_cur;
 
     // 检测是否有提前接触
-    //bool last_contacts[NUM_LEG];
+    bool last_contacts[NUM_LEG];
 
     for (int i = 0; i < NUM_LEG; ++i) {
-        /* if (state.gait_counter(i) <= state.counter_per_swing * 1.5) {
+        if (state.gait_counter(i) <= state.counter_per_swing * 1.5) {
             state.early_contacts[i] = false;
         }
         if (!state.plan_contacts[i] && (state.gait_counter(i) > state.counter_per_swing * 1.5) && (state.foot_force(i) > FOOT_FORCE_LOW)) {
             state.early_contacts[i] = true;
-        } */
+        }
 
         // 更新真实接触状态
-        //last_contacts[i] = state.contacts[i];
-        //state.contacts[i] = state.plan_contacts[i] || state.early_contacts[i];
-        state.contacts[i] = state.plan_contacts[i];
+        last_contacts[i] = state.contacts[i];
+        state.contacts[i] = state.plan_contacts[i] || state.early_contacts[i];
 
         // 如果接触地面，记录最近的落足点位置
         if (state.contacts[i]) {
@@ -203,7 +202,7 @@ void RobotControl::generate_swing_legs_ctrl(CtrlStates &state, double dt) {
         }
     }
 
-    std::cout << "foot_pos_recent_contact z: " << state.foot_pos_recent_contact.block<1, 4>(2, 0) << std::endl;
+    //std::cout << "foot_pos_recent_contact z: " << state.foot_pos_recent_contact.block<1, 4>(2, 0) << std::endl;
 
     state.foot_forces_kin = foot_forces_kin;
 }
@@ -289,8 +288,8 @@ Eigen::Matrix<double, 3, NUM_LEG> RobotControl::compute_grf(CtrlStates &state, d
     std_msgs::Float64 terrain_angle_msg;
     terrain_angle_msg.data = terrain_angle * (180 / 3.1415926);
     pub_terrain_angle.publish(terrain_angle_msg); // 用角度发布地形角
-    std::cout << "desire pitch in deg: " << state.root_euler_d[1] * (180 / 3.1415926) << std::endl;
-    std::cout << "terrain angle: " << terrain_angle << std::endl;
+    //std::cout << "desire pitch in deg: " << state.root_euler_d[1] * (180 / 3.1415926) << std::endl;
+    //std::cout << "terrain angle: " << terrain_angle << std::endl;
 
     // 保存计算的地形俯仰角
     state.terrain_pitch_angle = terrain_angle;

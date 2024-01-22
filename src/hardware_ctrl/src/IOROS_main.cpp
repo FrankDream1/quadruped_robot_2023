@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
     // ros::NodeHandle nh;
     IOROS _IOROS;
     //NodeUserInit(); // 参数初始化
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(100);
     while (ros::ok()) {
         _IOROS.sendCmd();
         loop_rate.sleep(); 
