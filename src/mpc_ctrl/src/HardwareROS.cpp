@@ -8,7 +8,10 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     motor_data = nh.subscribe<unitree_legged_msgs::upstream>("/upstream", 1000, &HardwareROS::receive_motor_state, this);
     // 接受IMU数据的ROS话题
     imu_data = nh.subscribe<sensor_msgs::Imu>("/dog_hardware/imu", 1000, &HardwareROS::receive_imu_state, this);
+    
+    // ！！！！！！！！！！！！！！！！！！！
     usleep(2000000);
+
     // 调试用的ROS话题
     pub_joint_cmd = nh.advertise<sensor_msgs::JointState>("/dog_hardware/joint_torque_cmd", 100);
     pub_joint_angle = nh.advertise<sensor_msgs::JointState>("/dog_hardware/joint_foot", 100);
@@ -33,38 +36,25 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
 
     _root_control = RobotControl(nh);
     dog_ctrl_states.reset();
-    dog_ctrl_states.resetFromROSParam(nh);
+    //dog_ctrl_states.resetFromROSParam(nh);
 
     // 初始化腿部运动学参数
     p_br = Eigen::Vector3d(-0.2293, 0.0, -0.067);
     R_br = Eigen::Matrix3d::Identity();
 
     // 腿的顺序: 0-FL  1-FR  2-RL  3-RR
-    // leg_offset_x[0] = 0.1805;
-    // leg_offset_x[1] = 0.1805;
-    // leg_offset_x[2] = -0.1805;
-    // leg_offset_x[3] = -0.1805;
-    // leg_offset_y[0] = 0.047;
-    // leg_offset_y[1] = -0.047;
-    // leg_offset_y[2] = 0.047;
-    // leg_offset_y[3] = -0.047;
-    // motor_offset[0] = 0.0838;
-    // motor_offset[1] = -0.0838;
-    // motor_offset[2] = 0.0838;
-    // motor_offset[3] = -0.0838;
-
     leg_offset_x[0] = 0.1805;
     leg_offset_x[1] = 0.1805;
     leg_offset_x[2] = -0.1805;
     leg_offset_x[3] = -0.1805;
     leg_offset_y[0] = 0.047;
     leg_offset_y[1] = -0.047;
-    leg_offset_y[2] = -0.047;
-    leg_offset_y[3] = 0.047;
+    leg_offset_y[2] = 0.047;
+    leg_offset_y[3] = -0.047;
     motor_offset[0] = 0.0838;
     motor_offset[1] = -0.0838;
-    motor_offset[2] = -0.0838;
-    motor_offset[3] = 0.0838;
+    motor_offset[2] = 0.0838;
+    motor_offset[3] = -0.0838;
     upper_leg_length[0] = upper_leg_length[1] = upper_leg_length[2] = upper_leg_length[3] = 0.20;
     lower_leg_length[0] = lower_leg_length[1] = lower_leg_length[2] = lower_leg_length[3] = 0.20;
 
@@ -76,10 +66,6 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
         rho_fix_list.push_back(rho_fix);
         rho_opt_list.push_back(rho_opt);
     }
-
-    //腿的顺序变换
-    swap_joint_indices << 0, 1, 2, 6, 7, 8, 3, 4, 5, 9, 10, 11;
-    swap_foot_indices << 0, 2, 1, 3;
 }
 
 bool HardwareROS::update_foot_forces_grf(double dt) {
@@ -210,15 +196,13 @@ bool HardwareROS::send_cmd() {
     unitree_legged_msgs::downstream motordown;
 
     // 下发控制命令
-    // 注意dog_ctrl_states.joint_torques中腿的顺序为FL, FR, RL, RR, 下位机中腿的顺序为FL, RL, FR, RR
     for (int i = 0; i < NUM_DOF; i++) {
         motordown.id[i] = i;        
         motordown.Pos[i] = 0;    // 禁止位置环
         motordown.W[i] = 0;      // 禁止速度环
         motordown.K_P[i] = 0;
         motordown.K_W[i] = 0;
-        int swap_i = swap_joint_indices(i);
-        motordown.T[i] = dog_ctrl_states.joint_torques(swap_i);
+        motordown.T[i] = dog_ctrl_states.joint_torques[i];
     }
 
     motor_cmd.publish(motordown);
@@ -241,24 +225,9 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::Const
 
         // 获取关节状态
         for (int i = 0; i < NUM_DOF; ++i) {
-            int swap_i = swap_joint_indices(i);
-            dog_ctrl_states.joint_vel[i] = motorup->W[swap_i];
-            dog_ctrl_states.joint_pos[i] = motorup->Pos[swap_i];
+            dog_ctrl_states.joint_vel[i] = motorup->W[i];
+            dog_ctrl_states.joint_pos[i] = motorup->Pos[i];
         }
-
-        // 足端力滤波
-        /* for (int i = 0; i < NUM_LEG; ++i) {
-            int swap_i = swap_foot_indices(i);
-            double value = static_cast<double>(state.footForce[swap_i]);
-
-            foot_force_filters_sum[i] -= foot_force_filters(i, foot_force_filters_idx[i]);
-            foot_force_filters(i, foot_force_filters_idx[i]) = value;
-            foot_force_filters_sum[i] += value;
-            foot_force_filters_idx[i]++;
-            foot_force_filters_idx[i] %= FOOT_FILTER_WINDOW_SIZE;
-
-            dog_ctrl_states.foot_force[i] = foot_force_filters_sum[i] / static_cast<double>(FOOT_FILTER_WINDOW_SIZE);
-        } */
 
         // 发布关节状态
         for (int i = 0; i < NUM_DOF; ++i) {
@@ -313,7 +282,7 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::Const
             std::cout << dog_ctrl_states.foot_pos_rel << std::endl;
             std::cout << std::endl;
             count++;
-        }
+        }    
 
         double interval_ms = HARDWARE_FEEDBACK_FREQUENCY;
         // sleep for interval_ms

@@ -52,18 +52,18 @@ void IOROS::sendCmd(){
 }
 
 void IOROS::initSend(){
-    _servo_pub[0] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FR_hip_controller/command", 1);
-    _servo_pub[1] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FR_thigh_controller/command", 1);
-    _servo_pub[2] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FR_calf_controller/command", 1);
-    _servo_pub[3] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FL_hip_controller/command", 1);
-    _servo_pub[4] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FL_thigh_controller/command", 1);
-    _servo_pub[5] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FL_calf_controller/command", 1);
-    _servo_pub[6] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RR_hip_controller/command", 1);
-    _servo_pub[7] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RR_thigh_controller/command", 1);
-    _servo_pub[8] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RR_calf_controller/command", 1);
-    _servo_pub[9] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RL_hip_controller/command", 1);
-    _servo_pub[10] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RL_thigh_controller/command", 1);
-    _servo_pub[11] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RL_calf_controller/command", 1);
+    _servo_pub[3] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FR_hip_controller/command", 1);
+    _servo_pub[4] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FR_thigh_controller/command", 1);
+    _servo_pub[5] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FR_calf_controller/command", 1);
+    _servo_pub[0] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FL_hip_controller/command", 1);
+    _servo_pub[1] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FL_thigh_controller/command", 1);
+    _servo_pub[2] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/FL_calf_controller/command", 1);
+    _servo_pub[9] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RR_hip_controller/command", 1);
+    _servo_pub[10] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RR_thigh_controller/command", 1);
+    _servo_pub[11] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RR_calf_controller/command", 1);
+    _servo_pub[6] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RL_hip_controller/command", 1);
+    _servo_pub[7] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RL_thigh_controller/command", 1);
+    _servo_pub[8] = _nm.advertise<unitree_legged_msgs::MotorCmd>("/" + _robot_name + "_gazebo/RL_calf_controller/command", 1);
     //gyk
     servo_pub = _nm.advertise<unitree_legged_msgs::upstream>("/upstream", 1);
     pub_imu = _nm.advertise<sensor_msgs::Imu>("/dog_hardware/imu", 100);
@@ -91,16 +91,16 @@ void IOROS::motorDataCallback(const unitree_legged_msgs::downstream& msg)
 {
     for(int i = 0; i < 12; i++)
     {
-        int id = msg.id[i];
-        _lowCmd.motorCmd[id].mode = 10;
-        _lowCmd.motorCmd[id].q = msg.Pos[i];
-        _lowCmd.motorCmd[id].dq = msg.W[i];
-        _lowCmd.motorCmd[id].tau = msg.T[i];
+        //int id = msg.id[i];
+        _lowCmd.motorCmd[i].mode = 10;
+        _lowCmd.motorCmd[i].q = msg.Pos[i];
+        _lowCmd.motorCmd[i].dq = msg.W[i];
+        _lowCmd.motorCmd[i].tau = msg.T[i];
         // _lowCmd.motorCmd[id].Kd = msg.K_W[i];
         // _lowCmd.motorCmd[id].Kp = msg.K_P[i];
         //初始kp，kd
-        _lowCmd.motorCmd[id].Kd = 0;
-        _lowCmd.motorCmd[id].Kp = 0;
+        _lowCmd.motorCmd[i].Kd = 0;
+        _lowCmd.motorCmd[i].Kp = 0;
     }
 }
 void IOROS::imuCallback(const sensor_msgs::Imu & msg)
@@ -130,30 +130,6 @@ void IOROS::imuCallback(const sensor_msgs::Imu & msg)
     // _lowState.imu.accelerometer[2] = msg.linear_acceleration.z;
 }
 
-void IOROS::FRhipCallback(const unitree_legged_msgs::MotorState& msg)
-{
-    _lowState.motorState[6].mode = msg.mode;
-    _lowState.motorState[6].q = msg.q;
-    _lowState.motorState[6].dq = msg.dq;
-    _lowState.motorState[6].tauEst = msg.tauEst;
-}
-
-void IOROS::FRthighCallback(const unitree_legged_msgs::MotorState& msg)
-{
-    _lowState.motorState[7].mode = msg.mode;
-    _lowState.motorState[7].q = msg.q;
-    _lowState.motorState[7].dq = msg.dq;
-    _lowState.motorState[7].tauEst = msg.tauEst;
-}
-
-void IOROS::FRcalfCallback(const unitree_legged_msgs::MotorState& msg)
-{
-    _lowState.motorState[8].mode = msg.mode;
-    _lowState.motorState[8].q = msg.q;
-    _lowState.motorState[8].dq = msg.dq;
-    _lowState.motorState[8].tauEst = msg.tauEst;
-}
-
 void IOROS::FLhipCallback(const unitree_legged_msgs::MotorState& msg)
 {
     _lowState.motorState[0].mode = msg.mode;
@@ -178,12 +154,60 @@ void IOROS::FLcalfCallback(const unitree_legged_msgs::MotorState& msg)
     _lowState.motorState[2].tauEst = msg.tauEst;
 }
 
+void IOROS::FRhipCallback(const unitree_legged_msgs::MotorState& msg)
+{
+    _lowState.motorState[3].mode = msg.mode;
+    _lowState.motorState[3].q = msg.q;
+    _lowState.motorState[3].dq = msg.dq;
+    _lowState.motorState[3].tauEst = msg.tauEst;
+}
+
+void IOROS::FRthighCallback(const unitree_legged_msgs::MotorState& msg)
+{
+    _lowState.motorState[4].mode = msg.mode;
+    _lowState.motorState[4].q = msg.q;
+    _lowState.motorState[4].dq = msg.dq;
+    _lowState.motorState[4].tauEst = msg.tauEst;
+}
+
+void IOROS::FRcalfCallback(const unitree_legged_msgs::MotorState& msg)
+{
+    _lowState.motorState[5].mode = msg.mode;
+    _lowState.motorState[5].q = msg.q;
+    _lowState.motorState[5].dq = msg.dq;
+    _lowState.motorState[5].tauEst = msg.tauEst;
+}
+
+void IOROS::RLhipCallback(const unitree_legged_msgs::MotorState& msg)
+{
+    _lowState.motorState[6].mode = msg.mode;
+    _lowState.motorState[6].q = msg.q;
+    _lowState.motorState[6].dq = msg.dq;
+    _lowState.motorState[6].tauEst = msg.tauEst;
+}
+
+void IOROS::RLthighCallback(const unitree_legged_msgs::MotorState& msg)
+{
+    _lowState.motorState[7].mode = msg.mode;
+    _lowState.motorState[7].q = msg.q;
+    _lowState.motorState[7].dq = msg.dq;
+    _lowState.motorState[7].tauEst = msg.tauEst;
+}
+
+void IOROS::RLcalfCallback(const unitree_legged_msgs::MotorState& msg)
+{
+    _lowState.motorState[8].mode = msg.mode;
+    _lowState.motorState[8].q = msg.q;
+    _lowState.motorState[8].dq = msg.dq;
+    _lowState.motorState[8].tauEst = msg.tauEst;
+}
+
 void IOROS::RRhipCallback(const unitree_legged_msgs::MotorState& msg)
 {
     _lowState.motorState[9].mode = msg.mode;
-    _lowState.motorState[9].q = -msg.q;
-    _lowState.motorState[9].dq = -msg.dq;
-    _lowState.motorState[9].tauEst = -msg.tauEst;
+    _lowState.motorState[9].q = msg.q;
+    _lowState.motorState[9].dq = msg.dq;
+    _lowState.motorState[9].tauEst = msg.tauEst;
 }
 
 void IOROS::RRthighCallback(const unitree_legged_msgs::MotorState& msg)
@@ -200,30 +224,6 @@ void IOROS::RRcalfCallback(const unitree_legged_msgs::MotorState& msg)
     _lowState.motorState[11].q = msg.q;
     _lowState.motorState[11].dq = msg.dq;
     _lowState.motorState[11].tauEst = msg.tauEst;
-}
-
-void IOROS::RLhipCallback(const unitree_legged_msgs::MotorState& msg)
-{
-    _lowState.motorState[3].mode = msg.mode;
-    _lowState.motorState[3].q = -msg.q;
-    _lowState.motorState[3].dq = -msg.dq;
-    _lowState.motorState[3].tauEst = -msg.tauEst;
-}
-
-void IOROS::RLthighCallback(const unitree_legged_msgs::MotorState& msg)
-{
-    _lowState.motorState[4].mode = msg.mode;
-    _lowState.motorState[4].q = msg.q;
-    _lowState.motorState[4].dq = msg.dq;
-    _lowState.motorState[4].tauEst = msg.tauEst;
-}
-
-void IOROS::RLcalfCallback(const unitree_legged_msgs::MotorState& msg)
-{
-    _lowState.motorState[5].mode = msg.mode;
-    _lowState.motorState[5].q = msg.q;
-    _lowState.motorState[5].dq = msg.dq;
-    _lowState.motorState[5].tauEst = msg.tauEst;
 }
 
 // #endif  // COMPILE_WITH_ROS

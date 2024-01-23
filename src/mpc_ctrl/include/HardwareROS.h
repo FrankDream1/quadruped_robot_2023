@@ -74,13 +74,6 @@ private:
     ros::Publisher pub_estimated_pose;      // 估计状态发布者
     sensor_msgs::JointState joint_foot_msg; // 关节及足端信息  
 
-    Eigen::Matrix<int, NUM_DOF, 1> swap_joint_indices;  // 腿的顺序变换矩阵
-    Eigen::Matrix<int, NUM_LEG, 1> swap_foot_indices;   // 足端的顺序变换矩阵
-
-    Eigen::Matrix<double, NUM_LEG, FOOT_FILTER_WINDOW_SIZE> foot_force_filters; // 足端力滤波
-    Eigen::Matrix<int, NUM_LEG, 1> foot_force_filters_idx;
-    Eigen::Matrix<double, NUM_LEG, 1> foot_force_filters_sum;
-
     // 操作杆命令
     double joy_cmd_velx = 0.0;
     double joy_cmd_vely = 0.0;
@@ -106,11 +99,8 @@ private:
     double upper_leg_length[4] = {};    // 大腿长度列表 
     double lower_leg_length[4] = {};    // 小腿长度列表
 
-    std::vector<Eigen::VectorXd> rho_fix_list;  // 机体偏置x和y, thigh关节偏置, 大腿长度, 小腿长度
+    std::vector<Eigen::VectorXd> rho_fix_list;  // hip关节相对质心偏置x和y, thigh关节相对hip关节偏置, 大腿长度, 小腿长度
     std::vector<Eigen::VectorXd> rho_opt_list;  // 接触的偏置cx, cy, cz
-
-    double PosStopF = 2.146E+9f;    // 禁止速度环
-    double VelStopF = 16000.0f;     // 禁止位置环
    
     Kinematics dog_kin; // 运动学变量
     
@@ -120,8 +110,6 @@ private:
 
     BasicEKF dog_estimate;  // 状态估计变量
 
-    int count1 = 0;
-    int count2 = 0;
     int count = 0;
 };
 
