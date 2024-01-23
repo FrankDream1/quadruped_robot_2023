@@ -97,7 +97,7 @@ void IOROS::motorDataCallback(const unitree_legged_msgs::downstream& msg)
         _lowCmd.motorCmd[i].dq = msg.W[i];
         _lowCmd.motorCmd[i].tau = msg.T[i];
         // _lowCmd.motorCmd[id].Kd = msg.K_W[i];
-        // _lowCmd.motorCmd[id].Kp = msg.K_P[i];
+        // _lowCmd.motorCmd[id].Kp = msg.K_P[i];123
         //初始kp，kd
         _lowCmd.motorCmd[i].Kd = 0;
         _lowCmd.motorCmd[i].Kp = 0;
