@@ -83,6 +83,8 @@ private:
     MovingWindowFilter recent_contact_x_filter[NUM_LEG];
     MovingWindowFilter recent_contact_y_filter[NUM_LEG];
     MovingWindowFilter recent_contact_z_filter[NUM_LEG];
+
+    int count = 0;
 };
 
 #endif //ROBOTCONTROL_H

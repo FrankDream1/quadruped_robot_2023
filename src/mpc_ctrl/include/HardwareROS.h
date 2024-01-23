@@ -110,7 +110,7 @@ private:
 
     BasicEKF dog_estimate;  // 状态估计变量
 
-    int count = 0;
+    int flag = 0;
 };
 
 #endif //HARDWAREROS_H

@@ -179,19 +179,20 @@ void RobotControl::generate_swing_legs_ctrl(CtrlStates &state, double dt) {
     state.foot_pos_cur = foot_pos_cur;
 
     // 检测是否有提前接触
-    bool last_contacts[NUM_LEG];
-
+    // bool last_contacts[NUM_LEG];
+    // for (int i = 0; i < NUM_LEG; ++i) {
+    //     if (state.gait_counter(i) <= state.counter_per_swing * 1.5) {
+    //         state.early_contacts[i] = false;
+    //     }
+    //     if (!state.plan_contacts[i] && (state.gait_counter(i) > state.counter_per_swing * 1.5) && (state.foot_force(i) > FOOT_FORCE_LOW)) {
+    //         state.early_contacts[i] = true;
+    //     }
+    //     // 更新真实接触状态
+    //     last_contacts[i] = state.contacts[i];
+    //     state.contacts[i] = state.plan_contacts[i] || state.early_contacts[i];
+    
     for (int i = 0; i < NUM_LEG; ++i) {
-        if (state.gait_counter(i) <= state.counter_per_swing * 1.5) {
-            state.early_contacts[i] = false;
-        }
-        if (!state.plan_contacts[i] && (state.gait_counter(i) > state.counter_per_swing * 1.5) && (state.foot_force(i) > FOOT_FORCE_LOW)) {
-            state.early_contacts[i] = true;
-        }
-
-        // 更新真实接触状态
-        last_contacts[i] = state.contacts[i];
-        state.contacts[i] = state.plan_contacts[i] || state.early_contacts[i];
+        state.contacts[i] = state.plan_contacts[i];
 
         // 如果接触地面，记录最近的落足点位置
         if (state.contacts[i]) {
@@ -211,6 +212,13 @@ void RobotControl::compute_joint_torques(CtrlStates &state) {
     Eigen::Matrix<double, NUM_DOF, 1> joint_torques;
     joint_torques.setZero();
     
+    //debug
+    // for (int i = 0; i < NUM_LEG; ++i) {
+    //     state.foot_forces_grf(2,i)=30;
+    //     state.foot_forces_grf(0,i)=0;
+    //     state.foot_forces_grf(1,i)=0;
+    // }
+
     mpc_init_counter++;
     // 开始10次，关节力矩设为0
     if (mpc_init_counter < 10) {
@@ -230,7 +238,12 @@ void RobotControl::compute_joint_torques(CtrlStates &state) {
                 joint_torques.segment<3>(i * 3) = jac.lu().solve(force_tgt);   // jac * tau = F
             }
         }
-
+    //     if (count < 100) {
+    //     std::cout << count <<":";
+    //     std::cout << state.foot_forces_grf<<"  ";
+    //     std::cout << std::endl;
+    //     count++;
+    // }
         // 重力补偿
         joint_torques += state.torques_gravity;
 
@@ -337,6 +350,13 @@ Eigen::Matrix<double, 3, NUM_LEG> RobotControl::compute_grf(CtrlStates &state, d
     }
     auto t1 = std::chrono::high_resolution_clock::now();
 
+    if (count < 100) {
+        std::cout << count <<":";
+        std::cout << state.root_pos[0]<<"  "<<state.root_pos[1];
+        std::cout << std::endl;
+        count++;
+    }
+
     // 计算Ac矩阵，适用于整个参考轨迹
     mpc_solver.calculate_A_mat_c(state.root_euler);
     auto t2 = std::chrono::high_resolution_clock::now();
@@ -404,6 +424,11 @@ Eigen::Matrix<double, 3, NUM_LEG> RobotControl::compute_grf(CtrlStates &state, d
             foot_forces_grf.block<3, 1>(0, i) = state.root_rot_mat.transpose() * solution.segment<3>(i * 3);
     }
 
+    // if (count < 100) {
+    //     std::cout << count << ":";
+    //     std::cout << foot_forces_grf << std::endl;
+    //     count++;
+    // }
     return foot_forces_grf;
 }
 

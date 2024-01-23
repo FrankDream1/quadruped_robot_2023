@@ -113,6 +113,7 @@ bool HardwareROS::main_update(double t, double dt) {
     // 机体坐标系中质心高度
     dog_ctrl_states.root_pos_d[2] = joy_cmd_body_height;
 
+
     // 运动模式切换
     if (joy_cmd_ctrl_state == 1) {
         // 转换到行走模式
@@ -204,7 +205,6 @@ bool HardwareROS::send_cmd() {
         motordown.K_W[i] = 0;
         motordown.T[i] = dog_ctrl_states.joint_torques[i];
     }
-
     motor_cmd.publish(motordown);
 
     return true;
@@ -275,13 +275,6 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::Const
             // 世界坐标系中速度为附体坐标系速度加上质心速度
             dog_ctrl_states.foot_vel_world.block<3, 1>(0, i) =
                     dog_ctrl_states.foot_vel_abs.block<3, 1>(0, i) + dog_ctrl_states.root_lin_vel;
-        }
-
-        if (count < 20) {
-            std::cout << count << std::endl;
-            std::cout << dog_ctrl_states.foot_pos_rel << std::endl;
-            std::cout << std::endl;
-            count++;
         }    
 
         double interval_ms = HARDWARE_FEEDBACK_FREQUENCY;
