@@ -68,12 +68,6 @@ private:
     ros::Subscriber imu_data;   // IMU数据订阅者
     ros::Subscriber sub_joy_msg;// 控制杆消息订阅者
 
-    // 调试用的
-    ros::Publisher pub_joint_cmd;           // 关节力矩命令发布者
-    ros::Publisher pub_joint_angle;         // 关节角度发布者
-    ros::Publisher pub_estimated_pose;      // 估计状态发布者
-    sensor_msgs::JointState joint_foot_msg; // 关节及足端信息  
-
     // 操作杆命令
     double joy_cmd_velx = 0.0;
     double joy_cmd_vely = 0.0;
