@@ -1,0 +1,59 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+            "label": "prerun",
+            "type": "shell",
+            "command": "source ${workspaceFolder}/devel/setup.bash"
+        },
+		{
+			"type": "catkin_make",
+			"args": [
+				"--directory",
+				"${workspaceFolder}",
+				"-DCMAKE_BUILD_TYPE=Debug"
+			],
+			"problemMatcher": [
+				"$catkin-gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"label": "catkin_make: build"
+		},
+		{
+			"type": "catkin_make",
+			"args": [
+				"--directory",
+				"${workspaceFolder}",
+				"-DCMAKE_BUILD_TYPE=Release"
+			],
+			"problemMatcher": [
+				"$catkin-gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"label": "catkin_make_release: build"
+		},
+		{
+            "label": "catkin clean",
+            "type": "shell",
+            "command": "catkin",
+            "args": [
+                "clean",
+                "-y"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": "$msCompile"
+        },
+	]
+}
