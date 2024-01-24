@@ -325,12 +325,12 @@ Eigen::Matrix<double, 3, NUM_LEG> RobotControl::compute_grf(CtrlStates &state, d
     }
     auto t1 = std::chrono::high_resolution_clock::now();
 
-    if (count < 100) {
-        std::cout << count <<":";
-        std::cout << state.root_pos << std::endl;
-        std::cout << std::endl;
-        count++;
-    }
+    // if (count < 100) {
+    //     std::cout << count <<":";
+    //     std::cout << state.root_pos << std::endl;
+    //     std::cout << std::endl;
+    //     count++;
+    // }
 
     // 计算Ac矩阵，适用于整个参考轨迹
     mpc_solver.calculate_A_mat_c(state.root_euler);

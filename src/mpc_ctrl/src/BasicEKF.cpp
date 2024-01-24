@@ -75,7 +75,7 @@ void BasicEKF::init_state(CtrlStates& state) {
 
     x.setZero();
     // 初始化机器人质心位置
-    x.segment<3>(0) = Eigen::Vector3d(0, 0, 0.1);
+    x.segment<3>(0) = Eigen::Vector3d(0, 0, 0);
     for (int i = 0; i < NUM_LEG; ++i) {
         // 机体坐标系中足端位置
         Eigen::Vector3d fk_pos = state.foot_pos_rel.block<3, 1>(0, i);
@@ -103,7 +103,8 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
     B.block<3, 3>(3, 0) = dt * eye3;
 
     // 加速度作为输入变量，为世界坐标系中质心加速度和重力加速度之和
-    Eigen::Vector3d u = state.root_rot_mat * state.imu_acc + Eigen::Vector3d(0, 0, -9.81);
+    // Eigen::Vector3d u = state.root_rot_mat * state.imu_acc + Eigen::Vector3d(0, 0, -9.81);
+    Eigen::Vector3d u = state.root_rot_mat * state.imu_acc;
 
     // 接触估计
     if (state.movement_mode == 0) {  
