@@ -12,20 +12,6 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     // ！！！！！！！！！！！！！！！！！！！
     usleep(2000000);
 
-    // 调试用的ROS话题
-    pub_joint_cmd = nh.advertise<sensor_msgs::JointState>("/dog_hardware/joint_torque_cmd", 100);
-    pub_joint_angle = nh.advertise<sensor_msgs::JointState>("/dog_hardware/joint_foot", 100);
-    pub_estimated_pose = nh.advertise<nav_msgs::Odometry>("/dog_hardware/estimation_body_pose", 100);
-
-    joint_foot_msg.name = {"FL0", "FL1", "FL2",
-                           "FR0", "FR1", "FR2",
-                           "RL0", "RL1", "RL2",
-                           "RR0", "RR1", "RR2",
-                           "FL_foot", "FR_foot", "RL_foot", "RR_foot"};
-    joint_foot_msg.position.resize(NUM_DOF + NUM_LEG);
-    joint_foot_msg.velocity.resize(NUM_DOF + NUM_LEG);
-    joint_foot_msg.effort.resize(NUM_DOF + NUM_LEG);
-
     // 接受控制手柄的ROS话题
     sub_joy_msg = nh.subscribe("/joy", 1000, &HardwareROS::joy_callback, this);
 
@@ -34,9 +20,8 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     prev_joy_cmd_ctrl_state = 0;
     joy_cmd_exit = false;
 
-    _root_control = RobotControl(nh);
+    _root_control = RobotControl();
     dog_ctrl_states.reset();
-    //dog_ctrl_states.resetFromROSParam(nh);
 
     // 初始化腿部运动学参数
     p_br = Eigen::Vector3d(-0.2293, 0.0, -0.067);
@@ -113,6 +98,7 @@ bool HardwareROS::main_update(double t, double dt) {
     // 机体坐标系中质心高度
     dog_ctrl_states.root_pos_d[2] = joy_cmd_body_height;
 
+
     // 运动模式切换
     if (joy_cmd_ctrl_state == 1) {
         // 转换到行走模式
@@ -148,16 +134,6 @@ bool HardwareROS::main_update(double t, double dt) {
 
     // 根据计算落足点生成摆动腿曲线
     _root_control.generate_swing_legs_ctrl(dog_ctrl_states, dt);
-
-    // 发布姿态估计值
-    nav_msgs::Odometry estimate_odom;
-    estimate_odom.pose.pose.position.x = dog_ctrl_states.estimated_root_pos(0);
-    estimate_odom.pose.pose.position.y = dog_ctrl_states.estimated_root_pos(1);
-    estimate_odom.pose.pose.position.z = dog_ctrl_states.estimated_root_pos(2);
-    estimate_odom.twist.twist.linear.x = dog_ctrl_states.estimated_root_vel(0);
-    estimate_odom.twist.twist.linear.y = dog_ctrl_states.estimated_root_vel(1);
-    estimate_odom.twist.twist.linear.z = dog_ctrl_states.estimated_root_vel(2);
-    pub_estimated_pose.publish(estimate_odom);
 
     return true;
 }
@@ -204,7 +180,6 @@ bool HardwareROS::send_cmd() {
         motordown.K_W[i] = 0;
         motordown.T[i] = dog_ctrl_states.joint_torques[i];
     }
-
     motor_cmd.publish(motordown);
 
     return true;
@@ -216,7 +191,6 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::Const
     ros::Duration dt(0);
 
     while (true) {
-        // 向dog_ctrl_states中填充数据, 注意state中的顺序是FL, RL, FR, RR, dog_ctrl_states中顺序为FL, FR, RL, RR
         // 获取当前时间(s)
         now = ros::Time::now();
         dt = now - prev;
@@ -228,19 +202,6 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::Const
             dog_ctrl_states.joint_vel[i] = motorup->W[i];
             dog_ctrl_states.joint_pos[i] = motorup->Pos[i];
         }
-
-        // 发布关节状态
-        for (int i = 0; i < NUM_DOF; ++i) {
-            joint_foot_msg.position[i] = dog_ctrl_states.joint_pos[i];
-            joint_foot_msg.velocity[i] = dog_ctrl_states.joint_vel[i];
-        }
-        for (int i = 0; i < NUM_LEG; ++i) {
-            // 规划的接触状态当作足端速度
-            joint_foot_msg.velocity[NUM_DOF + i] = dog_ctrl_states.plan_contacts[i];
-            //joint_foot_msg.effort[NUM_DOF + i] = dog_ctrl_states.foot_force[i];
-        }
-        joint_foot_msg.header.stamp = ros::Time::now();
-        pub_joint_angle.publish(joint_foot_msg);
 
         // 状态估计
         auto t1 = ros::Time::now();
@@ -275,13 +236,6 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::Const
             // 世界坐标系中速度为附体坐标系速度加上质心速度
             dog_ctrl_states.foot_vel_world.block<3, 1>(0, i) =
                     dog_ctrl_states.foot_vel_abs.block<3, 1>(0, i) + dog_ctrl_states.root_lin_vel;
-        }
-
-        if (count < 20) {
-            std::cout << count << std::endl;
-            std::cout << dog_ctrl_states.foot_pos_rel << std::endl;
-            std::cout << std::endl;
-            count++;
         }    
 
         double interval_ms = HARDWARE_FEEDBACK_FREQUENCY;

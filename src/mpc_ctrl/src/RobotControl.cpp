@@ -52,14 +52,6 @@ RobotControl::RobotControl() {
     }
 }
 
-RobotControl::RobotControl(ros::NodeHandle &_nh) : RobotControl() {
-    std::cout << "init nh" << std::endl;
-    nh = _nh;
-    _nh.param("use_sim_time", use_sim_time);
-    // 发布地形角
-    pub_terrain_angle = nh.advertise<std_msgs::Float64>("debug/terrain_angle", 100);
-}
-
 void RobotControl::update_plan(CtrlStates &state, double dt) {
     // 更新步态
     if (!state.movement_mode) {
@@ -179,19 +171,20 @@ void RobotControl::generate_swing_legs_ctrl(CtrlStates &state, double dt) {
     state.foot_pos_cur = foot_pos_cur;
 
     // 检测是否有提前接触
-    bool last_contacts[NUM_LEG];
-
+    // bool last_contacts[NUM_LEG];
+    // for (int i = 0; i < NUM_LEG; ++i) {
+    //     if (state.gait_counter(i) <= state.counter_per_swing * 1.5) {
+    //         state.early_contacts[i] = false;
+    //     }
+    //     if (!state.plan_contacts[i] && (state.gait_counter(i) > state.counter_per_swing * 1.5) && (state.foot_force(i) > FOOT_FORCE_LOW)) {
+    //         state.early_contacts[i] = true;
+    //     }
+    //     // 更新真实接触状态
+    //     last_contacts[i] = state.contacts[i];
+    //     state.contacts[i] = state.plan_contacts[i] || state.early_contacts[i];
+    
     for (int i = 0; i < NUM_LEG; ++i) {
-        if (state.gait_counter(i) <= state.counter_per_swing * 1.5) {
-            state.early_contacts[i] = false;
-        }
-        if (!state.plan_contacts[i] && (state.gait_counter(i) > state.counter_per_swing * 1.5) && (state.foot_force(i) > FOOT_FORCE_LOW)) {
-            state.early_contacts[i] = true;
-        }
-
-        // 更新真实接触状态
-        last_contacts[i] = state.contacts[i];
-        state.contacts[i] = state.plan_contacts[i] || state.early_contacts[i];
+        state.contacts[i] = state.plan_contacts[i];
 
         // 如果接触地面，记录最近的落足点位置
         if (state.contacts[i]) {
@@ -202,15 +195,13 @@ void RobotControl::generate_swing_legs_ctrl(CtrlStates &state, double dt) {
         }
     }
 
-    //std::cout << "foot_pos_recent_contact z: " << state.foot_pos_recent_contact.block<1, 4>(2, 0) << std::endl;
-
     state.foot_forces_kin = foot_forces_kin;
 }
 
 void RobotControl::compute_joint_torques(CtrlStates &state) {
     Eigen::Matrix<double, NUM_DOF, 1> joint_torques;
     joint_torques.setZero();
-    
+
     mpc_init_counter++;
     // 开始10次，关节力矩设为0
     if (mpc_init_counter < 10) {
@@ -287,9 +278,6 @@ Eigen::Matrix<double, 3, NUM_LEG> RobotControl::compute_grf(CtrlStates &state, d
 
     std_msgs::Float64 terrain_angle_msg;
     terrain_angle_msg.data = terrain_angle * (180 / 3.1415926);
-    pub_terrain_angle.publish(terrain_angle_msg); // 用角度发布地形角
-    //std::cout << "desire pitch in deg: " << state.root_euler_d[1] * (180 / 3.1415926) << std::endl;
-    //std::cout << "terrain angle: " << terrain_angle << std::endl;
 
     // 保存计算的地形俯仰角
     state.terrain_pitch_angle = terrain_angle;
@@ -336,6 +324,13 @@ Eigen::Matrix<double, 3, NUM_LEG> RobotControl::compute_grf(CtrlStates &state, d
                 -9.8;
     }
     auto t1 = std::chrono::high_resolution_clock::now();
+
+    if (count < 100) {
+        std::cout << count <<":";
+        std::cout << state.root_pos << std::endl;
+        std::cout << std::endl;
+        count++;
+    }
 
     // 计算Ac矩阵，适用于整个参考轨迹
     mpc_solver.calculate_A_mat_c(state.root_euler);

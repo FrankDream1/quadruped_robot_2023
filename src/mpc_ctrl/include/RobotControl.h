@@ -29,8 +29,6 @@ class RobotControl {
 public:
     RobotControl();
 
-    RobotControl(ros::NodeHandle &_nh);
-
     // 更新腿部运动模式和计算落足点位置
     void update_plan(CtrlStates &state, double dt);
 
@@ -68,10 +66,6 @@ private:
     // 实例化解算器
     OsqpEigen::Solver solver;
 
-    // ROS debug话题
-    ros::NodeHandle nh;  
-    ros::Publisher pub_terrain_angle;
-
     //MPC最开始10个计数单位不启动
     int mpc_init_counter;
 
@@ -83,6 +77,8 @@ private:
     MovingWindowFilter recent_contact_x_filter[NUM_LEG];
     MovingWindowFilter recent_contact_y_filter[NUM_LEG];
     MovingWindowFilter recent_contact_z_filter[NUM_LEG];
+
+    int count = 0;
 };
 
 #endif //ROBOTCONTROL_H
