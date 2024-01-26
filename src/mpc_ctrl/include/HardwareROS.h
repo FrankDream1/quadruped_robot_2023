@@ -103,8 +103,6 @@ private:
     RobotControl _root_control; // 控制过程变量，包含运动过程所需的函数
 
     BasicEKF dog_estimate;  // 状态估计变量
-
-    int flag = 0;
 };
 
 #endif //HARDWAREROS_H

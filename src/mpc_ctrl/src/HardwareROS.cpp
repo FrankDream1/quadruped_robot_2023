@@ -98,7 +98,6 @@ bool HardwareROS::main_update(double t, double dt) {
     // 机体坐标系中质心高度
     dog_ctrl_states.root_pos_d[2] = joy_cmd_body_height;
 
-
     // 运动模式切换
     if (joy_cmd_ctrl_state == 1) {
         // 转换到行走模式
@@ -213,14 +212,6 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::Const
         auto t2 = ros::Time::now();
         ros::Duration run_dt = t2 - t1;
 
-        // if (flag < 100) {
-        //     std::cout << flag <<":";
-        //     std::cout << dog_ctrl_states.root_pos.transpose() << std::endl;
-        //     std::cout << dog_ctrl_states.root_lin_vel.transpose() << std::endl;
-        //     std::cout << std::endl;
-        //     flag++;
-        // }
-
         // 使用估计位置和速度来计算世界坐标系中的足端位置和速度
         for (int i = 0; i < NUM_LEG; ++i) {
             dog_ctrl_states.foot_pos_rel.block<3, 1>(0, i) = dog_kin.fk(
@@ -270,11 +261,4 @@ void HardwareROS::receive_imu_state(const sensor_msgs::Imu::ConstPtr &imudata) {
     dog_ctrl_states.imu_acc = Eigen::Vector3d(imudata->linear_acceleration.x, imudata->linear_acceleration.y, imudata->linear_acceleration.z);
     dog_ctrl_states.imu_ang_vel = Eigen::Vector3d(imudata->angular_velocity.x, imudata->angular_velocity.y, imudata->angular_velocity.z);
     dog_ctrl_states.root_ang_vel = dog_ctrl_states.root_rot_mat * dog_ctrl_states.imu_ang_vel;
-
-    if (flag < 100) {
-        std::cout << flag <<":";
-        std::cout << dog_ctrl_states.imu_acc.transpose() << std::endl;
-        std::cout << std::endl;
-        flag++;
-    }
 }

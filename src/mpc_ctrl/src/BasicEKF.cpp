@@ -75,7 +75,7 @@ void BasicEKF::init_state(CtrlStates& state) {
 
     x.setZero();
     // 初始化机器人质心位置
-    x.segment<3>(0) = Eigen::Vector3d(0, 0, 0);
+    x.segment<3>(0) = Eigen::Vector3d(0, 0, 0.1);
     for (int i = 0; i < NUM_LEG; ++i) {
         // 机体坐标系中足端位置
         Eigen::Vector3d fk_pos = state.foot_pos_rel.block<3, 1>(0, i);
@@ -102,9 +102,8 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
     //       0*3
     B.block<3, 3>(3, 0) = dt * eye3;
 
-    // 加速度作为输入变量，为世界坐标系中质心加速度和重力加速度之和
-    // Eigen::Vector3d u = state.root_rot_mat * state.imu_acc + Eigen::Vector3d(0, 0, -9.81);
-    Eigen::Vector3d u = state.root_rot_mat * state.imu_acc;
+    // 加速度作为输入变量，为世界坐标系中质心加速度
+    Eigen::Vector3d u = state.root_rot_mat * state.imu_acc - Eigen::Vector3d(0, 0, -9.81);
 
     // 接触估计
     if (state.movement_mode == 0) {  
@@ -155,6 +154,7 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
         
         // leg_v = (-J_rf * av - skew(omega) * p_rf);
         Eigen::Vector3d leg_v = -state.foot_vel_rel.block<3, 1>(0, i) - Utils::skew(state.imu_ang_vel) * fk_pos;
+        // std::cout << i << ": " << leg_v.transpose() << std::endl;
         // r((i - 1) * 3 + 1 : (i - 1) * 3 + 3) = body_v - R_er * leg_v;
         // 摆动腿用质心速度，支撑腿用计算出的足端速度
         y.block<3,1>(NUM_LEG * 3 + i * 3, 0) = (1.0 - estimated_contacts[i]) * x.segment<3>(3) +  estimated_contacts[i] * state.root_rot_mat * leg_v;  
