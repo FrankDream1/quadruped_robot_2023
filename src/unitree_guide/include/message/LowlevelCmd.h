@@ -71,16 +71,27 @@ struct LowlevelCmd{
         motorCmd[legID*3+1].tau = 0;
         motorCmd[legID*3+2].tau = 0;
     }
-    void setSimStanceGain(int legID){
+    // void setSimStanceGain(int legID){
+    //     motorCmd[legID*3+0].mode = 10;
+    //     motorCmd[legID*3+0].Kp = 180;
+    //     motorCmd[legID*3+0].Kd = 8;
+    //     motorCmd[legID*3+1].mode = 10;
+    //     motorCmd[legID*3+1].Kp = 180;
+    //     motorCmd[legID*3+1].Kd = 8;
+    //     motorCmd[legID*3+2].mode = 10;
+    //     motorCmd[legID*3+2].Kp = 300;
+    //     motorCmd[legID*3+2].Kd = 15;
+    // }
+    void setSimStanceGain(int legID){   //our kp kd
         motorCmd[legID*3+0].mode = 10;
-        motorCmd[legID*3+0].Kp = 180;
-        motorCmd[legID*3+0].Kd = 8;
+        motorCmd[legID*3+0].Kp = 30;
+        motorCmd[legID*3+0].Kd = 2;
         motorCmd[legID*3+1].mode = 10;
-        motorCmd[legID*3+1].Kp = 180;
-        motorCmd[legID*3+1].Kd = 8;
+        motorCmd[legID*3+1].Kp = 20;
+        motorCmd[legID*3+1].Kd = 2;
         motorCmd[legID*3+2].mode = 10;
-        motorCmd[legID*3+2].Kp = 300;
-        motorCmd[legID*3+2].Kd = 15;
+        motorCmd[legID*3+2].Kp = 40;
+        motorCmd[legID*3+2].Kd = 3;
     }
     void setRealStanceGain(int legID){
         motorCmd[legID*3+0].mode = 10;

@@ -46,6 +46,10 @@ void IOROS::sendRecv(const LowlevelCmd *cmd, LowlevelState *state){
 }
 
 void IOROS::sendCmd(const LowlevelCmd *lowCmd){
+    int swap[12]={1, 1, 1, 1, 1, 1, 1, -1, -1, 1, -1, -1};//关节正方向变换
+    int swap_id[12]={3, 4, 5, 9, 10, 11, 0, 1, 2, 6, 7, 8};//电机id号变换
+    int p;
+    int id;
     for(int i(0); i < 12; ++i){
         _lowCmd.motorCmd[i].mode = lowCmd->motorCmd[i].mode;
         _lowCmd.motorCmd[i].q = lowCmd->motorCmd[i].q;
@@ -55,12 +59,14 @@ void IOROS::sendCmd(const LowlevelCmd *lowCmd){
         _lowCmd.motorCmd[i].Kp = lowCmd->motorCmd[i].Kp;
 
         //填充硬件通讯话题-------------------
+        p=swap[i];
+        id=swap_id[i];
         motor_downstream.id[i]=i;
-        motor_downstream.T[i]=lowCmd->motorCmd[i].tau;
-        motor_downstream.W[i]=lowCmd->motorCmd[i].dq;
-        motor_downstream.Pos[i]=lowCmd->motorCmd[i].q;
-        motor_downstream.K_P[i]=lowCmd->motorCmd[i].Kp;
-        motor_downstream.K_W[i]=lowCmd->motorCmd[i].Kd;
+        motor_downstream.T[i]=p*lowCmd->motorCmd[id].tau;
+        motor_downstream.W[i]=p*lowCmd->motorCmd[id].dq;
+        motor_downstream.Pos[i]=p*lowCmd->motorCmd[id].q;
+        motor_downstream.K_P[i]=lowCmd->motorCmd[id].Kp;
+        motor_downstream.K_W[i]=lowCmd->motorCmd[id].Kd;
     }
 
     servo_pub.publish(motor_downstream);
@@ -103,7 +109,7 @@ void IOROS::initSend(){
 }
 
 void IOROS::initRecv(){
-    our_imu_sub = _nm.subscribe("/dog_hardware/imu", 10, &IOROS::ourimuCallback, this);
+    our_imu_sub = _nm.subscribe("/dog_hardware/imu", 1, &IOROS::ourimuCallback, this);
     _our_motor = _nm.subscribe("/upstream", 1, &IOROS::motorDataCallback, this);
     _imu_sub = _nm.subscribe("/trunk_imu", 1, &IOROS::imuCallback, this);
     _servo_sub[0] = _nm.subscribe("/" + _robot_name + "_gazebo/FR_hip_controller/state", 1, &IOROS::FRhipCallback, this);
@@ -123,18 +129,35 @@ void IOROS::initRecv(){
 
 void IOROS::motorDataCallback(const unitree_legged_msgs::upstream& msg)
 {
+    int swap[12]={1, -1, -1, 1, 1, 1, 1, -1, -1, 1, 1, 1};//关节正方向变换
+    int swap_id[12]={6, 7, 8, 0, 1, 2, 9, 10, 11, 3, 4, 5};//电机id号变换
+    int p;
+    int id;
     for(int i = 0; i < 12; i++)
     {
-        int id = msg.id[i];
-        _lowState.motorState[id].mode = 10;
-        _lowState.motorState[id].q = msg.Pos[i];
-        _lowState.motorState[id].dq = msg.W[i];
-        _lowState.motorState[id].tauEst = msg.T[i];
+        p=swap[i];
+        id=swap_id[i];
+        _lowState.motorState[i].mode = 10;
+        _lowState.motorState[i].q = p*msg.Pos[id];
+        _lowState.motorState[i].dq = p*msg.W[id];
+        _lowState.motorState[i].tauEst = p*msg.T[id];
     }
 }
 void IOROS::ourimuCallback(const sensor_msgs::Imu & msg)
 { 
 //硬件imu数据接收
+    _lowState.imu.quaternion[0] = msg.orientation.w;
+    _lowState.imu.quaternion[1] = msg.orientation.x;
+    _lowState.imu.quaternion[2] = msg.orientation.y;
+    _lowState.imu.quaternion[3] = msg.orientation.z;
+
+    _lowState.imu.gyroscope[0] = msg.angular_velocity.x;
+    _lowState.imu.gyroscope[1] = msg.angular_velocity.y;
+    _lowState.imu.gyroscope[2] = msg.angular_velocity.z;
+    
+    _lowState.imu.accelerometer[0] = msg.linear_acceleration.x;
+    _lowState.imu.accelerometer[1] = msg.linear_acceleration.y;
+    _lowState.imu.accelerometer[2] = msg.linear_acceleration.z;
 }
 
 void IOROS::imuCallback(const sensor_msgs::Imu & msg)
