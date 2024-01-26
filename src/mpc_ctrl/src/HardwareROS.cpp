@@ -51,6 +51,9 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
         rho_fix_list.push_back(rho_fix);
         rho_opt_list.push_back(rho_opt);
     }
+
+    swap_joint_indices << 0, 1, 2, 6, 7, 8, 3, 4, 5, 9, 10, 11;
+    swap_foot_indices << 0, 2, 1, 3;
 }
 
 bool HardwareROS::update_foot_forces_grf(double dt) {
@@ -171,13 +174,15 @@ bool HardwareROS::send_cmd() {
     unitree_legged_msgs::downstream motordown;
 
     // 下发控制命令
+    // 注意dog_ctrl_states.joint_torques中腿的顺序为FL, FR, RL, RR, 下位机中腿的顺序为FL, RL, FR, RR
     for (int i = 0; i < NUM_DOF; i++) {
         motordown.id[i] = i;        
         motordown.Pos[i] = 0;    // 禁止位置环
         motordown.W[i] = 0;      // 禁止速度环
         motordown.K_P[i] = 0;
         motordown.K_W[i] = 0;
-        motordown.T[i] = dog_ctrl_states.joint_torques[i];
+        int swap_i = swap_joint_indices(i);
+        motordown.T[i] = dog_ctrl_states.joint_torques(swap_i);
     }
     motor_cmd.publish(motordown);
 
@@ -190,6 +195,7 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::Const
     ros::Duration dt(0);
 
     while (true) {
+        // 向dog_ctrl_states中填充数据, 注意下位机中腿的顺序是FL, RL, FR, RR, dog_ctrl_states中顺序为FL, FR, RL, RR
         // 获取当前时间(s)
         now = ros::Time::now();
         dt = now - prev;
@@ -198,10 +204,25 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::Const
 
         // 获取关节状态
         for (int i = 0; i < NUM_DOF; ++i) {
-            dog_ctrl_states.joint_vel[i] = motorup->W[i];
-            dog_ctrl_states.joint_pos[i] = motorup->Pos[i];
+            int swap_i = swap_joint_indices(i);
+            dog_ctrl_states.joint_vel[i] = motorup->W[swap_i];
+            dog_ctrl_states.joint_pos[i] = motorup->Pos[swap_i];
         }
 
+        // 足端力滤波
+        /* for (int i = 0; i < NUM_LEG; ++i) {
+            int swap_i = swap_foot_indices(i);
+            double value = static_cast<double>(state.footForce[swap_i]);
+
+            foot_force_filters_sum[i] -= foot_force_filters(i, foot_force_filters_idx[i]);
+            foot_force_filters(i, foot_force_filters_idx[i]) = value;
+            foot_force_filters_sum[i] += value;
+            foot_force_filters_idx[i]++;
+            foot_force_filters_idx[i] %= FOOT_FILTER_WINDOW_SIZE;
+
+            dog_ctrl_states.foot_force[i] = foot_force_filters_sum[i] / static_cast<double>(FOOT_FILTER_WINDOW_SIZE);
+        } */
+       
         // 状态估计
         auto t1 = ros::Time::now();
         if (!dog_estimate.is_inited()) {

@@ -66,7 +66,14 @@ private:
     ros::Publisher motor_cmd;   // 上位机发送命令的发布者
     ros::Subscriber motor_data; // 下位机反馈数据的订阅者
     ros::Subscriber imu_data;   // IMU数据订阅者
-    ros::Subscriber sub_joy_msg;// 控制杆消息订阅者
+    ros::Subscriber sub_joy_msg;// 控制杆消息订阅者 
+
+    Eigen::Matrix<int, NUM_DOF, 1> swap_joint_indices;  // 腿的顺序变换矩阵
+    Eigen::Matrix<int, NUM_LEG, 1> swap_foot_indices;   // 足端的顺序变换矩阵
+
+    // Eigen::Matrix<double, NUM_LEG, FOOT_FILTER_WINDOW_SIZE> foot_force_filters; // 足端力滤波
+    // Eigen::Matrix<int, NUM_LEG, 1> foot_force_filters_idx;
+    // Eigen::Matrix<double, NUM_LEG, 1> foot_force_filters_sum;
 
     // 操作杆命令
     double joy_cmd_velx = 0.0;

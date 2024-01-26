@@ -4,10 +4,10 @@ Eigen::Vector3d Utils::quat_to_euler(Eigen::Quaterniond quat) {
     Eigen::Vector3d rst;
 
     Eigen::Matrix<double, 4, 1> coeff = quat.coeffs();
-    double x = coeff(1);
-    double y = coeff(2);
-    double z = coeff(3);
-    double w = coeff(0);
+    double x = coeff(0);
+    double y = coeff(1);
+    double z = coeff(2);
+    double w = coeff(3);
 
     double y_sqr = y*y;
 

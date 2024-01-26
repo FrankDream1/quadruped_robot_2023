@@ -32,25 +32,15 @@ include_directories(
 
 link_directories(lib)
 
-add_executable(motor_communication src/motor_communication.cpp)
 add_executable(imu_communication src/imu_communication.cpp)
 add_executable(dogstandup src/standup.cpp)
 add_executable(STM32_Node src/stm32_communication.cpp src/UnitreeDriver.cpp)
-add_executable(IOROS src/IOROS_main.cpp src/IOROS.cpp)
 
-add_dependencies(motor_communication 
-  ${${PROJECT_NAME}_EXPORTED_TARGETS} 
-  ${catkin_EXPORTED_TARGETS}
-)
 add_dependencies(dogstandup 
   ${${PROJECT_NAME}_EXPORTED_TARGETS} 
   ${catkin_EXPORTED_TARGETS}
 )
 target_link_libraries(dogstandup 
-  ${catkin_LIBRARIES}
-  libUnitreeMotorSDK_M80106_amd64.so
-)
-target_link_libraries(motor_communication 
   ${catkin_LIBRARIES}
   libUnitreeMotorSDK_M80106_amd64.so
 )
@@ -61,11 +51,8 @@ target_link_libraries(imu_communication
 target_link_libraries(STM32_Node
   ${catkin_LIBRARIES}
 )
-target_link_libraries(IOROS
-  ${catkin_LIBRARIES}
-)
+
 # 链接静态库
-target_link_libraries(motor_communication ${YAML_CPP_LIBRARIES})
 target_link_libraries(dogstandup ${YAML_CPP_LIBRARIES})
 
 install(

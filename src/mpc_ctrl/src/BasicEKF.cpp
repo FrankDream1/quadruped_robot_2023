@@ -113,6 +113,7 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
     } else {
         // 行走状态，估计接触状态采用规划接触状态
         for (int i = 0; i < NUM_LEG; ++i) {
+            //estimated_contacts[i] = std::min(std::max((state.foot_force(i)) / (100.0 - 0.0), 0.0), 1.0);
             estimated_contacts[i] = state.plan_contacts[i];
         }
     }
