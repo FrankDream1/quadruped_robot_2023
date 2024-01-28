@@ -1,4 +1,6 @@
 #include "../include/HardwareROS.h"
+#include <iomanip>
+#include <stdio.h>
 
 HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     nh = _nh;
@@ -28,20 +30,20 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     R_br = Eigen::Matrix3d::Identity();
 
     // 腿的顺序: 0-FL  1-FR  2-RL  3-RR
-    leg_offset_x[0] = 0.1805;
-    leg_offset_x[1] = 0.1805;
-    leg_offset_x[2] = -0.1805;
-    leg_offset_x[3] = -0.1805;
-    leg_offset_y[0] = 0.047;
-    leg_offset_y[1] = -0.047;
-    leg_offset_y[2] = 0.047;
-    leg_offset_y[3] = -0.047;
-    motor_offset[0] = 0.0838;
-    motor_offset[1] = -0.0838;
-    motor_offset[2] = 0.0838;
-    motor_offset[3] = -0.0838;
-    upper_leg_length[0] = upper_leg_length[1] = upper_leg_length[2] = upper_leg_length[3] = 0.20;
-    lower_leg_length[0] = lower_leg_length[1] = lower_leg_length[2] = lower_leg_length[3] = 0.20;
+    leg_offset_x[0] = 0.2749;
+    leg_offset_x[1] = 0.2749;
+    leg_offset_x[2] = -0.2749;
+    leg_offset_x[3] = -0.2749;
+    leg_offset_y[0] = 0.09983;
+    leg_offset_y[1] = -0.09983;
+    leg_offset_y[2] = 0.09983;
+    leg_offset_y[3] = -0.09983;
+    motor_offset[0] = 0.0793;
+    motor_offset[1] = -0.0793;
+    motor_offset[2] = 0.0793;
+    motor_offset[3] = -0.0793;
+    upper_leg_length[0] = upper_leg_length[1] = upper_leg_length[2] = upper_leg_length[3] = 0.213;
+    lower_leg_length[0] = lower_leg_length[1] = lower_leg_length[2] = lower_leg_length[3] = 0.229;
 
     for (int i = 0; i < NUM_LEG; i++) {
         Eigen::VectorXd rho_fix(5);
@@ -59,6 +61,7 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
 bool HardwareROS::update_foot_forces_grf(double dt) {
     // 使用MPC控制计算支撑腿足端力
     dog_ctrl_states.foot_forces_grf = _root_control.compute_grf(dog_ctrl_states, dt);
+    // std::cout << "ground force:" << dog_ctrl_states.foot_forces_grf << std::endl << std::endl;
     return true;
 }
 
@@ -183,7 +186,11 @@ bool HardwareROS::send_cmd() {
         motordown.K_W[i] = 0;
         int swap_i = swap_joint_indices(i);
         motordown.T[i] = dog_ctrl_states.joint_torques(swap_i);
+        // motordown.T[i] = 0;
+        // std::cout << dog_ctrl_states.joint_torques(swap_i) << " ";
     }
+    // std::cout << dog_ctrl_states.joint_torques.transpose() << std::endl;
+    // std::cout << std::endl;
     motor_cmd.publish(motordown);
 
     return true;
@@ -194,77 +201,76 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::Const
     ros::Time now = ros::Time::now();
     ros::Duration dt(0);
 
-    while (true) {
-        // 向dog_ctrl_states中填充数据, 注意下位机中腿的顺序是FL, RL, FR, RR, dog_ctrl_states中顺序为FL, FR, RL, RR
-        // 获取当前时间(s)
-        now = ros::Time::now();
-        dt = now - prev;
-        prev = now;
-        double dt_s = dt.toSec();
+    // 向dog_ctrl_states中填充数据, 注意下位机中腿的顺序是FL, RL, FR, RR, dog_ctrl_states中顺序为FL, FR, RL, RR
+    // 获取当前时间(s)
+    now = ros::Time::now();
+    dt = now - prev;
+    prev = now;
+    double dt_s = dt.toSec();
 
-        // 获取关节状态
-        for (int i = 0; i < NUM_DOF; ++i) {
-            int swap_i = swap_joint_indices(i);
-            dog_ctrl_states.joint_vel[i] = motorup->W[swap_i];
-            dog_ctrl_states.joint_pos[i] = motorup->Pos[swap_i];
-        }
+    // 获取关节状态
+    for (int i = 0; i < NUM_DOF; ++i) {
+        int swap_i = swap_joint_indices(i);
+        dog_ctrl_states.joint_vel[i] = motorup->W[swap_i];
+        dog_ctrl_states.joint_pos[i] = motorup->Pos[swap_i];
+    }
 
-        // 足端力滤波
-        /* for (int i = 0; i < NUM_LEG; ++i) {
-            int swap_i = swap_foot_indices(i);
-            double value = static_cast<double>(state.footForce[swap_i]);
+    // 足端力滤波
+    // for (int i = 0; i < NUM_LEG; ++i) {
+    //     int swap_i = swap_foot_indices(i);
+    //     double value = static_cast<double>(state.footForce[swap_i]);
 
-            foot_force_filters_sum[i] -= foot_force_filters(i, foot_force_filters_idx[i]);
-            foot_force_filters(i, foot_force_filters_idx[i]) = value;
-            foot_force_filters_sum[i] += value;
-            foot_force_filters_idx[i]++;
-            foot_force_filters_idx[i] %= FOOT_FILTER_WINDOW_SIZE;
+    //     foot_force_filters_sum[i] -= foot_force_filters(i, foot_force_filters_idx[i]);
+    //     foot_force_filters(i, foot_force_filters_idx[i]) = value;
+    //     foot_force_filters_sum[i] += value;
+    //     foot_force_filters_idx[i]++;
+    //     foot_force_filters_idx[i] %= FOOT_FILTER_WINDOW_SIZE;
 
-            dog_ctrl_states.foot_force[i] = foot_force_filters_sum[i] / static_cast<double>(FOOT_FILTER_WINDOW_SIZE);
-        } */
-       
-        // 状态估计
-        auto t1 = ros::Time::now();
-        if (!dog_estimate.is_inited()) {
-            dog_estimate.init_state(dog_ctrl_states);
-        } else {
-            dog_estimate.update_estimation(dog_ctrl_states, dt_s);
-        }
-        auto t2 = ros::Time::now();
-        ros::Duration run_dt = t2 - t1;
+    //     dog_ctrl_states.foot_force[i] = foot_force_filters_sum[i] / static_cast<double>(FOOT_FILTER_WINDOW_SIZE);
+    // }
+    
+    // 状态估计
+    auto t1 = ros::Time::now();
+    if (!dog_estimate.is_inited()) {
+        dog_estimate.init_state(dog_ctrl_states);
+    } else {
+        dog_estimate.update_estimation(dog_ctrl_states, dt_s);
+    }
+    auto t2 = ros::Time::now();
+    ros::Duration run_dt = t2 - t1;
 
-        // 使用估计位置和速度来计算世界坐标系中的足端位置和速度
-        for (int i = 0; i < NUM_LEG; ++i) {
-            dog_ctrl_states.foot_pos_rel.block<3, 1>(0, i) = dog_kin.fk(
-                    dog_ctrl_states.joint_pos.segment<3>(3 * i),
-                    rho_opt_list[i], rho_fix_list[i]);
-            dog_ctrl_states.j_foot.block<3, 3>(3 * i, 3 * i) = dog_kin.jac(
-                    dog_ctrl_states.joint_pos.segment<3>(3 * i),
-                    rho_opt_list[i], rho_fix_list[i]);
-            Eigen::Matrix3d tmp_mtx = dog_ctrl_states.j_foot.block<3, 3>(3 * i, 3 * i);
-            Eigen::Vector3d tmp_vec = dog_ctrl_states.joint_vel.segment<3>(3 * i);
-            dog_ctrl_states.foot_vel_rel.block<3, 1>(0, i) = tmp_mtx * tmp_vec;
+    // std::cout << "root pos:" << dog_ctrl_states.root_pos.transpose() << std::endl;
+    // std::cout << "root vel:" << dog_ctrl_states.root_lin_vel.transpose() << std::endl;
+    // std::cout << std::endl;
 
-            dog_ctrl_states.foot_pos_abs.block<3, 1>(0, i) =
-                    dog_ctrl_states.root_rot_mat * dog_ctrl_states.foot_pos_rel.block<3, 1>(0, i);
-            dog_ctrl_states.foot_vel_abs.block<3, 1>(0, i) =
-                    dog_ctrl_states.root_rot_mat * dog_ctrl_states.foot_vel_rel.block<3, 1>(0, i);
+    // 使用估计位置和速度来计算世界坐标系中的足端位置和速度
+    for (int i = 0; i < NUM_LEG; ++i) {
+        dog_ctrl_states.foot_pos_rel.block<3, 1>(0, i) = dog_kin.fk(
+                dog_ctrl_states.joint_pos.segment<3>(3 * i),
+                rho_opt_list[i], rho_fix_list[i]);
+        dog_ctrl_states.j_foot.block<3, 3>(3 * i, 3 * i) = dog_kin.jac(
+                dog_ctrl_states.joint_pos.segment<3>(3 * i),
+                rho_opt_list[i], rho_fix_list[i]);
+        Eigen::Matrix3d tmp_mtx = dog_ctrl_states.j_foot.block<3, 3>(3 * i, 3 * i);
+        Eigen::Vector3d tmp_vec = dog_ctrl_states.joint_vel.segment<3>(3 * i);
+        dog_ctrl_states.foot_vel_rel.block<3, 1>(0, i) = tmp_mtx * tmp_vec;
 
-            // 世界坐标系中位置为附体坐标系位置加上质心位置
-            dog_ctrl_states.foot_pos_world.block<3, 1>(0, i) =
-                    dog_ctrl_states.foot_pos_abs.block<3, 1>(0, i) + dog_ctrl_states.root_pos;
-            // 世界坐标系中速度为附体坐标系速度加上质心速度
-            dog_ctrl_states.foot_vel_world.block<3, 1>(0, i) =
-                    dog_ctrl_states.foot_vel_abs.block<3, 1>(0, i) + dog_ctrl_states.root_lin_vel;
-        }    
+        dog_ctrl_states.foot_pos_abs.block<3, 1>(0, i) =
+                dog_ctrl_states.root_rot_mat * dog_ctrl_states.foot_pos_rel.block<3, 1>(0, i);
+        dog_ctrl_states.foot_vel_abs.block<3, 1>(0, i) =
+                dog_ctrl_states.root_rot_mat * dog_ctrl_states.foot_vel_rel.block<3, 1>(0, i);
 
-        double interval_ms = HARDWARE_FEEDBACK_FREQUENCY;
-        // sleep for interval_ms
-        double interval_time = interval_ms / 1000.0;
-        if (interval_time > run_dt.toSec()) {
-            ros::Duration(interval_time - run_dt.toSec()).sleep();
-        }
-    };
+        // 世界坐标系中位置为附体坐标系位置加上质心位置
+        dog_ctrl_states.foot_pos_world.block<3, 1>(0, i) =
+                dog_ctrl_states.foot_pos_abs.block<3, 1>(0, i) + dog_ctrl_states.root_pos;
+        // 世界坐标系中速度为附体坐标系速度加上质心速度
+        dog_ctrl_states.foot_vel_world.block<3, 1>(0, i) =
+                dog_ctrl_states.foot_vel_abs.block<3, 1>(0, i) + dog_ctrl_states.root_lin_vel;
+    }    
+
+    // std::cout << dog_ctrl_states.foot_pos_abs << std::endl;
+    // std::cout << dog_ctrl_states.foot_vel_abs << std::endl;
+    // std::cout << std::endl;
 }
 
 void HardwareROS::receive_imu_state(const sensor_msgs::Imu::ConstPtr &imudata) {
@@ -273,13 +279,16 @@ void HardwareROS::receive_imu_state(const sensor_msgs::Imu::ConstPtr &imudata) {
                                                    imudata->orientation.x,
                                                    imudata->orientation.y,
                                                    imudata->orientation.z);
-    dog_ctrl_states.root_rot_mat = dog_ctrl_states.root_quat.toRotationMatrix();
-    dog_ctrl_states.root_euler = Utils::quat_to_euler(dog_ctrl_states.root_quat);
+    dog_ctrl_states.root_rot_mat = dog_ctrl_states.transformation_rot * dog_ctrl_states.root_quat.toRotationMatrix() * dog_ctrl_states.transformation_rot.inverse();
+    dog_ctrl_states.root_euler = dog_ctrl_states.transformation_euler * Utils::quat_to_euler(dog_ctrl_states.root_quat);
     double yaw_angle = dog_ctrl_states.root_euler[2];
 
     dog_ctrl_states.root_rot_mat_z = Eigen::AngleAxisd(yaw_angle, Eigen::Vector3d::UnitZ());
 
-    dog_ctrl_states.imu_acc = Eigen::Vector3d(imudata->linear_acceleration.x, imudata->linear_acceleration.y, imudata->linear_acceleration.z);
-    dog_ctrl_states.imu_ang_vel = Eigen::Vector3d(imudata->angular_velocity.x, imudata->angular_velocity.y, imudata->angular_velocity.z);
+    dog_ctrl_states.imu_acc = Eigen::Vector3d(-imudata->linear_acceleration.y, imudata->linear_acceleration.x, imudata->linear_acceleration.z);
+    dog_ctrl_states.imu_ang_vel = Eigen::Vector3d(-imudata->angular_velocity.y, imudata->angular_velocity.x, imudata->angular_velocity.z);
     dog_ctrl_states.root_ang_vel = dog_ctrl_states.root_rot_mat * dog_ctrl_states.imu_ang_vel;
+
+    // std::cout << dog_ctrl_states.root_rot_mat << std::endl;
+    // std::cout << std::endl;
 }

@@ -29,14 +29,20 @@ public:
 		root_euler_d.setZero();
 		root_lin_vel_d.setZero();
 		root_ang_vel_d.setZero();
+		transformation_rot << 0, -1, 0,
+							1, 0, 0,
+							0, 0, 1;
+		transformation_euler << 0, -1, 0,
+								1, 0, 0,
+								0, 0, 1;
 
-		robot_mass = 20;
+		robot_mass = 15;
 		trunk_inertia << 0.0158533, 0.0, 0.0,
 			0.0, 0.0377999, 0.0,
 			0.0, 0.0, 0.0456542;
-		default_foot_pos << 0.20, 0.20, -0.16, -0.16057,
-  			0.16, -0.16, 0.16, -0.16,
-			-0.035, -0.035, -0.035, -0.035;
+		default_foot_pos << 0.2749, 0.2749, -0.2749, -0.2749,
+  			0.1791, -0.1791, 0.1791, -0.1791,
+			-0.05, -0.05, -0.05, -0.05;
 
 		q_weights.resize(13);
 		r_weights.resize(12);
@@ -163,6 +169,8 @@ public:
     Eigen::Matrix3d root_rot_mat_z;	// 机体坐标系到附体坐标系变换（相对z轴）
     Eigen::Vector3d root_lin_vel;	// 质心线速度
     Eigen::Vector3d root_ang_vel;	// 机身角速度
+	Eigen::Matrix3d transformation_rot;	// 机体坐标系到IMU坐标系旋转矩阵变换
+	Eigen::Matrix3d transformation_euler;	// IMU坐标系到机体坐标系姿态变换矩阵
 
     Eigen::Vector4d foot_force;	// 足端力
     Eigen::Matrix<double, 3, NUM_LEG> foot_forces_kin;	// 摆动腿足端残差力 

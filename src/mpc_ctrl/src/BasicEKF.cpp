@@ -85,6 +85,10 @@ void BasicEKF::init_state(CtrlStates& state) {
 }
 
 void BasicEKF::update_estimation(CtrlStates& state, double dt) {
+
+    ros::Time prev;
+    ros::Time now;
+
     // 更新状态转移矩阵和控制输入矩阵
     // F << I3  I3*dt 0*3 0*3 0*3 0*3
     //      0*3  I3   0*3 0*3 0*3 0*3
@@ -103,7 +107,8 @@ void BasicEKF::update_estimation(CtrlStates& state, double dt) {
     B.block<3, 3>(3, 0) = dt * eye3;
 
     // 加速度作为输入变量，为世界坐标系中质心加速度
-    Eigen::Vector3d u = state.root_rot_mat * state.imu_acc - Eigen::Vector3d(0, 0, -9.81);
+    Eigen::Vector3d u = state.root_rot_mat * state.imu_acc + Eigen::Vector3d(0, 0, -9.82);
+    // std::cout << u.transpose() << std::endl;
 
     // 接触估计
     if (state.movement_mode == 0) {  

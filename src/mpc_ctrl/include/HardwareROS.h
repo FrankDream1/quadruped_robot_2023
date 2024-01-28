@@ -84,7 +84,7 @@ private:
     double joy_cmd_yaw_rate = 0.0;
     double joy_cmd_pitch_ang = 0.0;
     double joy_cmd_roll_ang = 0.0;
-    double joy_cmd_body_height = 0.12;
+    double joy_cmd_body_height = 0.3;
 
     int joy_cmd_ctrl_state = 0; // 操作杆控杆变量，0代表站立, 1代表行走
     bool joy_cmd_ctrl_state_change_request = false;

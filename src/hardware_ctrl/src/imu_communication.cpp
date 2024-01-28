@@ -12,6 +12,9 @@
 
 using namespace std;
 using namespace serial;
+#define USERPASSWORD "XJPisNo1"
+#define DriverBaudRate 115200   // 驱动板使用的串口波特率
+std::string PortName = "/dev/ttyACM0";
 
 struct DataFrame {
     float angle[3];         // 角度
@@ -49,19 +52,28 @@ int main(int argc, char** argv) {
     sensor_msgs::Imu imudata;
 
     serial::Serial ser; // 声明串口对象
-    ser.setPort("/dev/ttyACM0");    // 串口设备
-    ser.setBaudrate(115200);    // 设置波特率
+    try {
+        std::string sudoPassword = USERPASSWORD;
+        std::string SerialCommand = "sudo chmod 777 " + PortName;
+        std::string FinalCommand = "echo " + sudoPassword + "|sudo -S " + SerialCommand;
+        system(FinalCommand.data());
+        ser.setPort(PortName);
+        ser.setBaudrate(DriverBaudRate);
+        serial::Timeout to = serial::Timeout::simpleTimeout(1000);  //设置读取串口数据到缓存区的时间
+        ser.setTimeout(to);
+        ser.open(); 
+    }
+    catch (serial::IOException& e) {
+        ROS_ERROR_STREAM("Open Serial Failed!");
+    }
+    if (ser.isOpen()) {
+        ROS_INFO_STREAM(PortName << " Open Serial Succeed!");
+    }
+    Serial my_serial(PortName, DriverBaudRate, Timeout::simpleTimeout(1000));
 
-    //设置读取串口数据到缓存区的时间
-    serial::Timeout to = serial::Timeout::simpleTimeout(1000);
-    ser.setTimeout(to);
-    
-    ser.open(); // 打开串口
     string rec_data;    // 接受到的数据
     std::vector<uint8_t> buffer;    // 缓冲区
 
-    Serial my_serial("/dev/ttyACM0", 115200, Timeout::simpleTimeout(1000));
-    
     while (ros::ok) {
         // 读取数据
         size_t bytes_read = my_serial.read(buffer, 2);
@@ -83,7 +95,7 @@ int main(int argc, char** argv) {
                     imudata.header.stamp = ros::Time::now();
                     imudata.angular_velocity.x = c_data.angularVel[0];
                     imudata.angular_velocity.y = c_data.angularVel[1];
-                    imudata.angular_velocity.x = c_data.angularVel[2];
+                    imudata.angular_velocity.z = c_data.angularVel[2];
                     imudata.linear_acceleration.x = c_data.acceleration[0];
                     imudata.linear_acceleration.y = c_data.acceleration[1];
                     imudata.linear_acceleration.z = c_data.acceleration[2];
@@ -91,8 +103,10 @@ int main(int argc, char** argv) {
                     imudata.orientation.x = c_data.quaternion[1];
                     imudata.orientation.y = c_data.quaternion[2];
                     imudata.orientation.z = c_data.quaternion[3];
+
                     // 发布IMU的ROS话题
                     pub_imu.publish(imudata);
+                    ROS_INFO_STREAM("Read Succeed!");
                 } else {
                     cerr << "CRC校验失败" << endl;
                 }

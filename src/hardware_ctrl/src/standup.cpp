@@ -81,7 +81,8 @@ YAML::Node joint = YAML::LoadFile("/home/frank/桌面/quadruped_robot_2023/src/h
         // 填充数据到发布的控制命令中
         for (int i = 1; i <= 12; i++) {
             motcmd.Pos[i-1] = data[i-1].Pos + tt * derta_pos[i-1];
-            motcmd.T[i-1] = cur_tau[i-1] + tt * derta_tau[i-1];
+            // motcmd.T[i-1] = cur_tau[i-1] + tt * derta_tau[i-1];
+            motcmd.T[i-1] = 0;
             // motcmd.Pos[i-1] = data[i-1].Pos + tt * derta_pos[i-1];
             motcmd.K_P[i-1] = kp[i-1];
             // 下发控制信息并接收电机回传数据                                                                                                                                                                              
