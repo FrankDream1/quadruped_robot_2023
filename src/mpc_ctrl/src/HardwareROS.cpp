@@ -9,7 +9,7 @@ HardwareROS::HardwareROS(ros::NodeHandle &_nh) {
     motor_cmd = nh.advertise<unitree_legged_msgs::downstream>("/downstream", 100);
     motor_data = nh.subscribe<unitree_legged_msgs::upstream>("/upstream", 1000, &HardwareROS::receive_motor_state, this);
     // 接受IMU数据的ROS话题
-    imu_data = nh.subscribe<sensor_msgs::Imu>("/dog_hardware/imu", 1000, &HardwareROS::receive_imu_state, this);
+    imu_data = nh.subscribe<sensor_msgs::Imu>("/imu", 1000, &HardwareROS::receive_imu_state, this);
     
     // ！！！！！！！！！！！！！！！！！！！
     usleep(2000000);
@@ -176,24 +176,91 @@ bool HardwareROS::send_cmd() {
 
     unitree_legged_msgs::downstream motordown;
 
-    // 下发控制命令
-    // 注意dog_ctrl_states.joint_torques中腿的顺序为FL, FR, RL, RR, 下位机中腿的顺序为FL, RL, FR, RR
-    for (int i = 0; i < NUM_DOF; i++) {
-        motordown.id[i] = i;        
-        motordown.Pos[i] = 0;    // 禁止位置环
-        motordown.W[i] = 0;      // 禁止速度环
-        motordown.K_P[i] = 0;
-        motordown.K_W[i] = 0;
-        int swap_i = swap_joint_indices(i);
-        motordown.T[i] = dog_ctrl_states.joint_torques(swap_i);
-        // motordown.T[i] = 0;
-        // std::cout << dog_ctrl_states.joint_torques(swap_i) << " ";
+    //前10個單位不啓動
+    if (_root_control.mpc_init_counter >= 10) {
+        // 下发控制命令
+        // 注意dog_ctrl_states.joint_torques中腿的顺序为FL, FR, RL, RR, 下位机中腿的顺序为FL, RL, FR, RR
+        for (int i = 0; i < NUM_DOF; i++) {
+            motordown.id[i] = i;        
+            motordown.Pos[i] = 0;    // 禁止位置环
+            motordown.W[i] = 0;      // 禁止速度环
+            motordown.K_P[i] = 0;
+            motordown.K_W[i] = 0;
+            int swap_i = swap_joint_indices(i);
+            // motordown.T[i] = dog_ctrl_states.joint_torques(swap_i);
+            motordown.T[i] = 0;
+            // std::cout << dog_ctrl_states.joint_torques(swap_i) << " ";
+        }
+        // std::cout << dog_ctrl_states.joint_torques.transpose() << std::endl;
+        // std::cout << std::endl;
+        motor_cmd.publish(motordown);
+ 
     }
-    // std::cout << dog_ctrl_states.joint_torques.transpose() << std::endl;
-    // std::cout << std::endl;
-    motor_cmd.publish(motordown);
 
     return true;
+}
+
+int HardwareROS::protect_motor() {
+    unitree_legged_msgs::downstream motordown;
+    //speed control
+    double stop_threshold = 30;
+    for (int i = 0; i < NUM_LEG; i++) {
+        // 髋关节位置限制
+        if (dog_ctrl_states.joint_pos[3 * i] >= 0.81) {
+            motordown.Pos[3 * i] = 0.81;
+            motordown.K_P[3 * i] = 5;
+            stop_pos = 1;
+        }
+        if (dog_ctrl_states.joint_pos[3 * i] <= -0.81) {
+            motordown.Pos[3 * i] = -0.81;
+            motordown.K_P[3 * i] = 5;
+            stop_pos = 1;
+        }
+        // 大腿位置限制
+        if (dog_ctrl_states.joint_pos[3 * i + 1] >= 1.57) {
+            motordown.Pos[3 * i + 1] = 1.57;
+            motordown.K_P[3 * i + 1] = 5;
+            stop_pos = 1;
+        }
+        if (dog_ctrl_states.joint_pos[3 * i + 1] <= -0.785) {
+            motordown.Pos[3 * i + 1] = -0.785;
+            motordown.K_P[3 * i + 1] = 5;
+            stop_pos = 1;
+        }
+        // 小腿位置限制
+        if (dog_ctrl_states.joint_pos[3 * i + 2] >= 0) {
+            motordown.Pos[3 * i + 2] = 0;
+            motordown.K_P[3 * i + 2] = 5;
+            stop_pos = 1;
+        }
+        if (dog_ctrl_states.joint_pos[3 * i + 2] <= -2.42) {
+            motordown.Pos[3 * i + 2] = -2.42;
+            motordown.K_P[3 * i + 2] = 5;
+            stop_pos = 1;
+        }
+    }
+    // 电机速度限制
+    for (int i = 0; i < NUM_DOF; ++i) {
+        if (dog_ctrl_states.joint_vel[i] > stop_threshold || dog_ctrl_states.joint_vel[i] < -stop_threshold) {
+            std::cout << "!!! Too fast speed of motor" << i << ", current omiga is" << dog_ctrl_states.joint_vel[i];
+            motordown.K_W[i] = 0.5;
+            motordown.W[i] = 0;
+            stop_flag = 1;
+        }
+    }
+    // 发布控制指令
+    if (stop_pos || stop_flag) {
+        for (int i = 0; i < NUM_DOF; i++) {
+            int swap_i = swap_joint_indices(i);
+            motordown.Pos[i] = motordown.Pos[swap_i];
+            motordown.id[i] = i;            
+            motordown.K_P[i] = motordown.K_P[swap_i];
+            motordown.W[i] = motordown.W[swap_i];
+            motordown.K_W[i] = motordown.K_W[swap_i];
+        }
+        motor_cmd.publish(motordown);
+    }
+    //pos control
 }
 
 void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::ConstPtr &motorup) {
@@ -213,6 +280,11 @@ void HardwareROS::receive_motor_state(const unitree_legged_msgs::upstream::Const
         int swap_i = swap_joint_indices(i);
         dog_ctrl_states.joint_vel[i] = motorup->W[swap_i];
         dog_ctrl_states.joint_pos[i] = motorup->Pos[swap_i];
+    }
+
+    // 保护电机
+    if (protect_motor() == 1) {
+        std::cout << "!!! STOP !!!!" <<std::endl;
     }
 
     // 足端力滤波

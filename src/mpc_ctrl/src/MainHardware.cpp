@@ -104,8 +104,6 @@ int main(int argc, char **argv) {
                 ros::Duration( MAIN_UPDATE_FREQUENCY / 1000 - dt_solver_time.toSec() ).sleep();
             }
         }
-
-        
     });
     
     ros::AsyncSpinner spinner(12);

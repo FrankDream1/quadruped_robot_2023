@@ -44,6 +44,9 @@ public:
     // 计算行走平面
     Eigen::Vector3d compute_walking_surface(CtrlStates &state);
 
+    //MPC最开始10个计数单位不启动
+    int mpc_init_counter;
+
 private:
     // 摆动腿生成贝塞尔曲线
     BezierUtils bezierUtils[NUM_LEG];
@@ -65,10 +68,7 @@ private:
 
     // 实例化解算器
     OsqpEigen::Solver solver;
-
-    //MPC最开始10个计数单位不启动
-    int mpc_init_counter;
-
+    
     // 使用仿真时间
     std::string use_sim_time;
 

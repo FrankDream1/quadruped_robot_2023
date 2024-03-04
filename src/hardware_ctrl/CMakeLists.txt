@@ -32,7 +32,6 @@ include_directories(
 
 link_directories(lib)
 
-add_executable(imu_communication src/imu_communication.cpp)
 add_executable(dogstandup src/standup.cpp)
 add_executable(STM32_Node src/stm32_communication.cpp src/UnitreeDriver.cpp)
 
@@ -41,10 +40,6 @@ add_dependencies(dogstandup
   ${catkin_EXPORTED_TARGETS}
 )
 target_link_libraries(dogstandup 
-  ${catkin_LIBRARIES}
-  libUnitreeMotorSDK_M80106_amd64.so
-)
-target_link_libraries(imu_communication 
   ${catkin_LIBRARIES}
   libUnitreeMotorSDK_M80106_amd64.so
 )

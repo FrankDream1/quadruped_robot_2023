@@ -60,6 +60,12 @@ public:
     // 上位机向下位机发送控制指令
     bool send_cmd();
 
+    // 保护机制
+    int protect_motor();
+
+    int stop_flag = 0;
+    int stop_pos=0;  //位置截止标志, 1 = stop, 0 = continue
+
 private:
     ros::NodeHandle nh;
 
